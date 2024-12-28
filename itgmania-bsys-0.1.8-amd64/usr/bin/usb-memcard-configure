@@ -1,0 +1,138 @@
+#!/bin/bash
+
+# Colors for readability
+BLUE='\033[1;34m'
+GREEN='\033[1;32m'
+RED='\033[1;31m'
+NC='\033[0m'
+
+show_preamble() {
+  echo -e "\n**************************************************************"
+  echo -e " This script will configure USB media mounts for Player 1 and  "
+  echo -e " Player 2 USB ports to specific locations in the filesystem.  "
+  echo -e " This ensures that the game can correctly detect USB memory   "
+  echo -e " cards connected to these ports.                             "
+  echo -e "                                                              "
+  echo -e " WARNING: This will overwrite any existing mount entries for  "
+  echo -e " /mnt/player1 and /mnt/player2. Please ensure the correct     "
+  echo -e " USB devices are inserted into the correct ports.             "
+  echo -e "                                                              "
+  echo -e " Proceed with caution as this will update the /etc/fstab file. "
+  echo -e "**************************************************************\n"
+  echo -e "Proceeding with the USB configuration...\n"
+}
+
+check_error() {
+  if [[ $? -ne 0 ]]; then
+    echo -e "${RED}Error: $1. Exiting.${NC}"
+    exit 1
+  fi
+}
+
+get_initial_devices() {
+    lsblk -d -o NAME | tail -n +2
+}
+
+detect_device_changes() {
+    local initial_devices="$1"
+    local current_devices="$2"
+
+    new_device=$(comm -13 <(echo "$initial_devices" | sort) <(echo "$current_devices" | sort))
+    removed_device=$(comm -23 <(echo "$initial_devices" | sort) <(echo "$current_devices" | sort))
+
+    echo "$new_device" "$removed_device"
+}
+
+get_device_path() {
+    local device="$1"
+    # Get the device partion 1 path
+    udevadm info --name="/dev/$device" --query=all | grep "ID_PATH=" | cut -d= -f2 | sed 's/$/-part1/'
+}
+
+update_fstab() {
+    local device_path="$1"
+    local mount_point="$2"
+    local fstab_file="/etc/fstab"
+
+    # Escape slashes in the mount point to prevent issues with sed
+    local escaped_mount_point
+    escaped_mount_point=$(echo "$mount_point" | sed 's/\//\\\//g')
+
+    # Check if the device is mounted to the mount point, and unmount it if necessary
+    if mount | grep -q "$mount_point"; then
+        echo "Unmounting device from $mount_point..."
+        sudo umount "$mount_point"
+        check_error "Failed to unmount $mount_point"
+    fi
+
+    # Remove the existing line for the mount point (if exists)
+    if grep -q "$escaped_mount_point" "$fstab_file"; then
+        # Remove the existing line if it exists
+        sudo sed -i "/$escaped_mount_point/d" "$fstab_file"
+        check_error
+        echo "Found and removed previous entry for $mount_point in /etc/fstab."
+    fi
+
+    # Add the new entry with the device_path, mount point, and options
+    echo "$device_path $mount_point auto nosuid,nodev,nofail,noauto,uid=1000,gid=1000,rw,users 0 0" | sudo tee -a "$fstab_file" > /dev/null
+    check_error
+
+    echo "Updated /etc/fstab to mount $device_path on $mount_point"
+}
+
+configure_memcard_for_player() {
+    local player_num="$1"
+    local mount_point="/mnt/player$player_num"
+
+    echo -e "${BLUE}Please insert a USB drive in the Player $player_num USB port...${NC}"
+
+    # Get the initial list of devices
+    initial_devices=$(get_initial_devices)
+
+    # Wait for USB device insertion
+    while true; do
+        current_devices=$(lsblk -d -o NAME | tail -n +2)
+
+        # Detect any new or removed devices
+        device_changes=$(detect_device_changes "$initial_devices" "$current_devices")
+        new_device=$(echo "$device_changes" | cut -d ' ' -f1)
+        removed_device=$(echo "$device_changes" | cut -d ' ' -f2)
+
+        if [ -n "$new_device" ]; then
+            # If a new device is found, it is the USB device we are looking for
+            echo "New device detected: /dev/$new_device"
+
+            # Get the device path using udevadm
+            device_path=$(get_device_path "$new_device")
+
+            if [ -n "$device_path" ]; then
+                echo "Device path: /dev/disk/by-path/$device_path"
+
+                # Update /etc/fstab with the new device path and specified options
+                update_fstab "/dev/disk/by-path/$device_path" "$mount_point"
+                break
+            else
+                echo "Could not determine the path for device /dev/$new_device"
+            fi
+        fi
+
+        if [ -n "$removed_device" ]; then
+            initial_devices="$current_devices"
+        fi
+
+        sleep 1
+    done
+}
+
+# Elevate to sudo
+sudo -v
+check_error "Failed to gain sudo privileges"
+
+show_preamble
+
+configure_memcard_for_player 1
+echo -e "${GREEN}USB Memory card for Player 1 configured.${NC}"
+
+configure_memcard_for_player 2
+echo -e "${GREEN}USB Memory card for Player 2 configured.${NC}"
+echo -e "Exiting."

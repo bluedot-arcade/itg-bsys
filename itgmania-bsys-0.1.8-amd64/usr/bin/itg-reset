@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Colors for readability
+BLUE='\033[1;34m'
+GREEN='\033[1;32m'
+RED='\033[1;31m'
+NC='\033[0m'
+
+RESET_SCRIPT="/usr/libexec/itg-reset-to-defaults.sh"
+
+show_preamble() {
+  echo -e "\n**************************************************************"
+  echo -e " This script will reset the ITGMania settings to default."
+  echo -e " Changes made to files such as Preferences.ini will be lost."
+  echo -e "**************************************************************\n"
+  echo -e "Proceeding...\n"
+}
+
+check_error() {
+  if [[ $? -ne 0 ]]; then
+    echo -e "${RED}Error: $1. Exiting.${NC}"
+    exit 1
+  fi
+}
+
+show_preamble
+
+# Ask the user for confirmation before proceeding
+read -p "Are you sure you want to reset ITGMania settings? [y/N] " -n 1 -r
+echo
+
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    $RESET_SCRIPT
+    check_error "Failed to reset ITGMania settings"
+else
+  echo -e "\n${RED}Aborted.${NC}"
+fi

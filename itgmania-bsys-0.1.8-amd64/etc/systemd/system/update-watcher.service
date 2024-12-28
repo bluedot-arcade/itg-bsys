@@ -1,0 +1,9 @@
+[Unit]
+Description=Perfom media update when the /var/local/update flagfile changes.
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/libexec/update-update-flag.sh
+
+[Install]
+WantedBy=multi-user.target

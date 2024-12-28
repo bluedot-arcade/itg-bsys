@@ -1,0 +1,11 @@
+[Unit]
+Description=Start OBS Studio streaming over RTMP
+
+[Service]
+ExecStart=/usr/libexec/start-streaming-obs.sh
+Restart=on-failure
+RestartSec=5
+
+[Install]
+# Uncomment the following line to start automatically at boot.
+# WantedBy=multi-user.target

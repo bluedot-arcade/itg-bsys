@@ -1,0 +1,6 @@
+Package: itgmania-bsys
+Version: 0.1.8
+Architecture: amd64
+Maintainer: Bluedot Arcade <bluedotarcade@gmail.com>
+Depends: bash, systemd, udev
+Description: Custom ITGMania build with associated services and scripts.

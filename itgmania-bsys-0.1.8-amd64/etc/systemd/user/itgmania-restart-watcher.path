@@ -1,0 +1,8 @@
+[Unit]
+Description=Monitor changes to /var/local/itg-restart flagfile
+
+[Path]
+PathChanged=/var/local/itg-restart
+
+[Install]
+WantedBy=default.target

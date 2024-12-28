@@ -1,0 +1,9 @@
+[Unit]
+Description=Start/Stop OBS Studio stream when /var/local/itg-stream-enabled flagfile changes.
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/libexec/update-itg-stream-enabled-flag.sh
+
+[Install]
+WantedBy=default.target

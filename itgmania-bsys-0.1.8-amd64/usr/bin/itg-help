@@ -1,0 +1,62 @@
+#!/bin/bash
+
+print_help() {
+    # Define minimal color codes
+    CYAN='\033[1;36m'
+    WHITE='\033[1;37m'
+    RESET='\033[0m'
+
+    # Print header
+    echo -e "${CYAN}============================================${RESET}"
+    echo -e "${CYAN}             Available Commands             ${RESET}"
+    echo -e "${CYAN}============================================${RESET}"
+    echo ""
+
+    # Combined Commands Section
+    echo -e "${CYAN}Game Commands:${RESET}"
+    echo ""
+    echo -e "  itg-help                - Show this message"
+    echo -e "  itg-status              - Check the game status."
+    echo -e "  itg-log                 - Show the game log."
+    echo -e "  itg-start               - Start the game."
+    echo -e "  itg-stop                - Stop the game."
+    echo -e "  itg-restart             - Restart the game."
+    echo -e "  itg-pref                - Show/Edit Preferences.ini."
+    echo -e "  itg-data                - Show game data folder in Nautilus."
+    echo -e "  itg-reset               - Reset the game settings to default."
+    echo ""
+
+    # Service Mode Commands
+    echo -e "${CYAN}Service Mode Commands:${RESET}"
+    echo ""
+    echo -e "  service-mode-enable     - Enables the service mode."
+    echo -e "  service-mode-disable    - Disables the service mode."
+    echo -e "  service-mode-check      - Checks if the service mode is enabled."
+    echo ""
+
+    # USB Configuration
+    echo -e "${CYAN}USB Configuration:${RESET}"
+    echo ""
+    echo -e "  usb-hid-block-configure     - Configure the USB hub to block HID devices."
+    echo -e "  usb-hid-polling-check       - Run the utility to check HID device polling rate."
+    echo -e "  usb-memcard-configure       - Configure USB ports for memory cards."
+    echo ""
+
+    # Streaming Commands
+    echo -e "${CYAN}Streaming Commands:${RESET}"
+    echo ""
+    echo -e "  itg-stream-start        - Start streaming the game window over UDP."
+    echo -e "  itg-stream-stop         - Stop streaming the game window over UDP."
+    echo -e "  itg-stream-status       - Check if the game is being streamed over UDP."
+    echo ""
+
+    # Update Commands
+    echo -e "${CYAN}Update Commands:${RESET}"
+    echo ""
+    echo -e "  update-check            - Check if an update is available."
+    echo ""
+}
+
+print_help
+
+if ! sudo udevadm trigger

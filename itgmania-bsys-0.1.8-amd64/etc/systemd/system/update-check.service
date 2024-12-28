@@ -1,0 +1,9 @@
+[Unit]
+Description=Check if an update is available on a connected media storage.
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/libexec/check-update-from-media.sh
+
+[Install]
+WantedBy=multi-user.target

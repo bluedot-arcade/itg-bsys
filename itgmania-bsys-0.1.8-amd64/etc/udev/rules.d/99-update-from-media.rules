@@ -1,0 +1,1 @@
+ACTION=="add", SUBSYSTEM=="block", ENV{ID_FS_LABEL}=="BSYS-UPDATE", RUN+="/usr/bin/systemctl start update-check.service"

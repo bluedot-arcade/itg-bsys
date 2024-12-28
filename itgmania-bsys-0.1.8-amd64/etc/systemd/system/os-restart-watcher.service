@@ -1,0 +1,9 @@
+[Unit]
+Description=Restart OS when the /var/local/os-restart flagfile changes.
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/libexec/update-os-restart-flag.sh
+
+[Install]
+WantedBy=multi-user.target

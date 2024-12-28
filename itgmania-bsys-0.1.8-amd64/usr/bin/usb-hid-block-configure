@@ -1,0 +1,111 @@
+#!/bin/bash
+
+# Colors for readability
+BLUE='\033[1;34m'
+GREEN='\033[1;32m'
+RED='\033[1;31m'
+NC='\033[0m'
+
+# Function to check the last command and exit on failure
+check_error() {
+  if [[ $? -ne 0 ]]; then
+    echo -e "${RED}Error: $1. Exiting.${NC}"
+    exit 1
+  fi
+}
+
+# Elevate to sudo
+sudo -v
+check_error "Failed to gain sudo privileges"
+
+# Show preamble
+echo -e "\n**************************************************************"
+echo -e " This script will configure a udev rule to block USB HID      "
+echo -e " devices connected to the selected USB hub.                   "
+echo -e "                                                              "
+echo -e " The rule will make these devices unusable unless a           "
+echo -e " service-mode flag is enabled system-wide. You can also       "
+echo -e " configure the hub to ignore the service-mode flag and        "
+echo -e " disable the HID devices connected on the hub permanently.    "
+echo -e "                                                              "
+echo -e " WARNING: This will overwrite any previously configured       "
+echo -e " hub settings. Only one USB hub can be configured at a        "
+echo -e " time. Please ensure you are selecting the correct hub.       "
+echo -e "                                                              "
+echo -e " During configuration, make sure to select an actual          "
+echo -e " USB hub; selecting a non-hub device may prevent the          "
+echo -e " rule from functioning as intended.                           "
+echo -e "**************************************************************\n"
+echo -e "Proceeding with the configuration...\n"
+
+# Parse and display numbered lsusb options
+mapfile -t devices < <(lsusb)
+check_error "Failed to get USB devices list!"
+max_index_length=$((${#devices[@]} - 1))
+index_width=${#max_index_length}
+echo -e "${BLUE}Available USB devices:${NC}"
+for i in "${!devices[@]}"; do
+  printf "%-${index_width}d) %s\n" "$i" "${devices[i]}"
+done
+
+# Prompt user to select a USB hub
+echo -e "${BLUE}Please select the USB Hub to configure from the list above:${NC}"
+read -p "Enter the number: " selection
+
+# Validate selection
+if [[ ! $selection =~ ^[0-9]+$ ]] || (( selection < 0 || selection >= ${#devices[@]} )); then
+  echo -e "${RED}Invalid selection. Exiting.${NC}"
+  exit 1
+fi
+
+# Extract VID and PID
+selected_device="${devices[$selection]}"
+echo -e "You selected: $selected_device"
+vid=$(echo "$selected_device" | grep -oP 'ID \K[0-9a-f]{4}' | head -n 1)
+pid=$(echo "$selected_device" | grep -oP 'ID [0-9a-f]{4}:\K[0-9a-f]{4}')
+if [[ -z "$vid" || -z "$pid" ]]; then
+  echo -e "${RED}Failed to extract VID and PID. Exiting.${NC}"
+  exit 1
+fi
+
+echo -e "${GREEN}Configuring udev rule for device with VID: $vid, PID: $pid${NC}"
+
+# Generate udev rule content
+udev_rule="SUBSYSTEM==\"hidraw\", ATTRS{idVendor}==\"$vid\", ATTRS{idProduct}==\"$pid\", ACTION==\"add\", RUN+=\"/usr/libexec/hidraw-hub-authorize.sh %k\""
+udev_rules_file="/etc/udev/rules.d/80-hid-hub-block.rules"
+
+# Ask for confirmation to block HID devices permanently
+while true; do
+  echo -e "${BLUE}Do you want to configure the rule to always block HID devices connected to this hub? (y/N):${NC}"
+  read -r confirmation
+  case $confirmation in
+    [Yy]*)
+      echo -e "${RED}WARNING: This will block HID devices permanently, ignore the service-mode flag!"
+      echo -e "You will not be able to use keyboards or mouses connected to this hub even if you quit from the game.${NC}"
+      echo -e "Are you sure you want to continue? (y/N): " 
+      read -r final_confirmation
+      if [[ ! $final_confirmation =~ ^[Yy]$ ]]; then
+        echo -e "${RED}Cancelled configuration. Exiting.${NC}"
+        exit 1
+      fi
+      udev_rule="SUBSYSTEM==\"hidraw\", ATTRS{idVendor}==\"$vid\", ATTRS{idProduct}==\"$pid\", ACTION==\"add\", RUN+=\"/usr/libexec/hidraw-hub-authorize.sh %k --unauthorize\"" 
+      break
+      ;;
+    *)
+      echo -e "${BLUE}Proceeding with default configuration. Devices will be blocked only if service-mode flag is enabled.${NC}"
+      break
+      ;;
+  esac
+done
+
+# Write udev rule to file
+echo -e "Writing udev rule to $udev_rules_file..."
+echo "$udev_rule" | sudo tee "$udev_rules_file" > /dev/null
+check_error "Failed to write the udev rule"
+
+# Reload udev rules
+echo -e "Reloading udev rules..."
+sudo udevadm control --reload-rules
+check_error "Failed to reload udev rules"
+
+echo -e "${GREEN}Udev rule created and reloaded successfully!${NC}"

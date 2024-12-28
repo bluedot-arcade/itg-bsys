@@ -1,0 +1,11 @@
+[Unit]
+Description=Listen for IP address changes
+After=network.target
+
+[Service]
+ExecStart=/bin/bash /usr/libexec/ipaddr-listener.sh
+Restart=always
+Type=simple
+
+[Install]
+WantedBy=default.target

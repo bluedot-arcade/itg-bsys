@@ -1,0 +1,13 @@
+[Unit]
+Description=ITGMania Service
+After=sound.target
+
+[Service]
+Type=exec
+Restart=on-failure
+RestartSec=3s
+ExecStart=/usr/bin/bash -c '/opt/itgmania/start.sh'
+Nice=-10
+
+[Install]
+WantedBy=default.target

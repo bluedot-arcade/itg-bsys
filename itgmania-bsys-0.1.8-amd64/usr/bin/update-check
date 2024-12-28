@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Colors for readability
+GREEN='\033[1;32m'
+RED='\033[1;31m'
+NC='\033[0m'
+
+FLAG_FILE="/var/local/update-ready"
+UPDATE_SCRIPT="/usr/libexec/do-update-from-media"
+
+if [ -f $FLAG_FILE ]; then
+    CONTENT=$(cat $FLAG_FILE)
+    if [[ "$CONTENT" == "1" ]]; then
+        echo -e "${GREEN}A new update is ready to be installed!${NC}"
+
+        # Ask the user if they want to install the update
+        read -p "Do you want to install the update now? [Y/n] " -n 1 -r
+        echo
+
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            $UPDATE_SCRIPT
+        else
+            echo -e "Update skipped"
+        fi
+    else
+        echo -e "No update available"
+    fi
+else
+    echo -e "${RED}Failed to find update flag file${NC}"
+fi

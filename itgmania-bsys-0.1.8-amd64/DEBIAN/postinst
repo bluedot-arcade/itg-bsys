@@ -1,0 +1,82 @@
+#!/bin/bash
+
+set -e
+
+run_user_systemctl() {
+    echo "Running user systemctl command: systemctl --user -M itg@ $@"
+    if ! sudo systemctl --user -M itg@ "$@"; then
+        echo "ERROR: Failed to run systemctl --user -M itg@ $@"
+    fi
+}
+
+run_systemctl() {
+    echo "Running system systemctl command: systemctl $@"
+    if ! sudo systemctl "$@"; then
+        echo "ERROR: Failed to run systemctl $@"
+    fi
+}
+
+echo "Reloading systemd..."
+systemctl daemon-reload
+run_user_systemctl daemon-reload
+
+# ITGMania service
+run_user_systemctl enable itgmania.service
+
+# ITGMania restart flag watcher
+run_user_systemctl enable itgmania-restart-watcher.path
+run_user_systemctl enable itgmania-restart-watcher.service
+run_user_systemctl start itgmania-restart-watcher.path
+
+# ITGMania stop flag watcher
+run_user_systemctl enable itgmania-stop-watcher.path
+run_user_systemctl enable itgmania-stop-watcher.service
+run_user_systemctl start itgmania-stop-watcher.path
+
+# ITGMania reset flag watcher
+run_user_systemctl enable itgmania-reset-watcher.path
+run_user_systemctl enable itgmania-reset-watcher.service
+run_user_systemctl start itgmania-reset-watcher.path
+
+# OBS Streaming service
+run_user_systemctl enable obs-streaming.service
+
+# OBS Streaming flag watcher
+run_user_systemctl enable obs-streaming-watcher.path
+run_user_systemctl enable obs-streaming-watcher.service
+run_user_systemctl start obs-streaming-watcher.path
+
+# System restart flag watcher
+run_systemctl enable os-restart-watcher.path
+run_systemctl enable os-restart-watcher.service
+run_systemctl start os-restart-watcher.path
+
+# System shutdown flag watcher
+run_systemctl enable os-shutdown-watcher.path
+run_systemctl enable os-shutdown-watcher.service
+run_systemctl start os-shutdown-watcher.path
+
+# System update flag watcher
+run_systemctl enable update-watcher.path
+run_systemctl enable update-watcher.service
+run_systemctl start update-watcher.path
+
+# System update check service
+run_systemctl enable update-check.service
+
+# System ipaddr listener
+run_systemctl enable ipaddr-listener.service
+run_systemctl start ipaddr-listener.service
+
+# Udev rules
+echo "Reloading udev rules..."
+if ! sudo udevadm control --reload-rules; then
+    echo "ERROR: Failed to reload udev rules."
+    exit 1
+fi
+if ! sudo udevadm trigger; then
+    echo "ERROR: Failed to trigger udev rules."
+    exit 1
+fi
+
+echo "Postinst script execution completed successfully."

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Colors for readability
+GREEN='\033[1;32m'
+RED='\033[1;31m'
+NC='\033[0m'
+
+# Check if service mode is enabled
+if grep -q '^1$' /var/local/service-mode-enabled; then
+    echo -e "Service mode: ${RED}ENABLED${NC}"
+else
+    echo -e "Service mode: ${GREEN}DISABLED${NC}"
+fi

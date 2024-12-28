@@ -1,0 +1,8 @@
+[Unit]
+Description=Monitor changes to /var/local/itg-stream-enabled flagfile
+
+[Path]
+PathChanged=/var/local/itg-stream-enabled
+
+[Install]
+WantedBy=default.target

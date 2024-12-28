@@ -1,0 +1,8 @@
+[Unit]
+Description=Monitor changes to /var/local/itg-reset flagfile
+
+[Path]
+PathChanged=/var/local/itg-reset
+
+[Install]
+WantedBy=default.target
