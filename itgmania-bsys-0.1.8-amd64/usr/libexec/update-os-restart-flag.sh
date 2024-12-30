@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Path to the monitored file
-FLAG_FILE="/var/local/restart-os"
+FLAG_FILE="/var/local/os-restart"
 
 reset_flag() {
    echo "0" > "$FLAG_FILE"

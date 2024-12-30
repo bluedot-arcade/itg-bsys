@@ -1,3 +1,3 @@
 - [ ] Setup permissions and owner settings (currently is uses itg:itg on all files)
 - [ ] Fix udevadm reload rules in postinst scriptù
-- [ ] Fix /
+- [ ] Fix streaming service not stopping on reboot. 
