@@ -1,6 +1,8 @@
 #!/bin/bash
 
-controlFile="src/DEBIAN/control"
+srcDir="src"
+buildDir="build"
+controlFile="${srcDir}/DEBIAN/control"
 
 # Verify the control file exists
 if [ ! -f "$controlFile" ]; then
@@ -23,10 +25,10 @@ fi
 mkdir -p "build"
 
 # Construct the output .deb file name
-outputFile="build/${packageName}-${packageVersion}-${packageArch}.deb"
+outputFile="${buildDir}/${packageName}-${packageVersion}-${packageArch}.deb"
 
 # Build the .deb package
-dpkg-deb --build "$srcFolder" "$outputFile"
+dpkg-deb --build "$srcDir" "$outputFile"
 
 if [ $? -eq 0 ]; then
   echo "Package created successfully: $outputFile"
