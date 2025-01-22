@@ -71,7 +71,7 @@ if ! sudo dpkg -i "$PACKAGE"; then
 fi
 
 if [[ -f "$FLAG_FILE" ]]; then
-    echo "0" > "$FLAG_FILE"
+    echo "0" | sudo tee "$FLAG_FILE" > /dev/null
     echo "Flag file set to 0." 
     sync
 else 
