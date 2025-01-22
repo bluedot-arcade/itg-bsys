@@ -1,0 +1,8 @@
+[Unit]
+Description=Monitor changes to /run/user/1000/itg/os-shutdown flagfile
+
+[Path]
+PathChanged=/run/user/1000/itg/os-shutdown
+
+[Install]
+WantedBy=multi-user.target

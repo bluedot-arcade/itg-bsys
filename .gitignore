@@ -1,1 +1,4 @@
 itgmania
+
+# Ignore build outputs
+build

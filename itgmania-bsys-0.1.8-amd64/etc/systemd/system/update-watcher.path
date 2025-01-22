@@ -1,8 +1,0 @@
-[Unit]
-Description=Monitor changes to /var/local/update flagfile
-
-[Path]
-PathChanged=/var/local/update
-
-[Install]
-WantedBy=multi-user.target

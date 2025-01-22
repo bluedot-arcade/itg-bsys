@@ -1,9 +1,0 @@
-[Unit]
-Description=Stop itgmania when the /var/local/itg-stop flagfile changes.
-
-[Service]
-Type=oneshot
-ExecStart=/bin/bash /usr/libexec/update-itg-stop-flag.sh
-
-[Install]
-WantedBy=default.target

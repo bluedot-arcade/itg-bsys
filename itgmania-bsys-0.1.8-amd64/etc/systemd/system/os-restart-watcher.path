@@ -1,8 +1,0 @@
-[Unit]
-Description=Monitor changes to /var/local/os-restart flagfile
-
-[Path]
-PathChanged=/var/local/os-restart
-
-[Install]
-WantedBy=multi-user.target

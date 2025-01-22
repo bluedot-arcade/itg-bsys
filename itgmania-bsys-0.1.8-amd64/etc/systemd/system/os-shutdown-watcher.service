@@ -1,9 +1,0 @@
-[Unit]
-Description=Shutdown OS when the /var/local/os-shutdown flagfile changes.
-
-[Service]
-Type=oneshot
-ExecStart=/bin/bash /usr/libexec/update-os-shutdown-flag.sh
-
-[Install]
-WantedBy=multi-user.target

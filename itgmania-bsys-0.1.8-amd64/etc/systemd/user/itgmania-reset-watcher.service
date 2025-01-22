@@ -1,9 +1,0 @@
-[Unit]
-Description=Reset itgmania tp default settings when the /var/local/itg-reset flagfile changes.
-
-[Service]
-Type=oneshot
-ExecStart=/bin/bash /usr/libexec/update-itg-reset-flag.sh
-
-[Install]
-WantedBy=default.target

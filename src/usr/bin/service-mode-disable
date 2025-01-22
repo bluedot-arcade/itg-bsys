@@ -1,0 +1,6 @@
+#!/bin/bash
+
+echo 0 > /run/user/1000/itg/service-mode-enabled
+
+/usr/bin/service-mode-check
+

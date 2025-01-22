@@ -1,0 +1,8 @@
+[Unit]
+Description=Monitor changes to /run/user/1000/itg/itg-reset flagfile
+
+[Path]
+PathChanged=/run/user/1000/itg/itg-reset
+
+[Install]
+WantedBy=default.target

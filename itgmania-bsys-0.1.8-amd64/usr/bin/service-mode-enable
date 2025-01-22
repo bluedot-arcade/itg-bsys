@@ -1,5 +1,0 @@
-#!/bin/bash
-
-echo 1 > /var/local/service-mode-enabled
-
-/usr/bin/service-mode-check

@@ -1,9 +1,0 @@
-[Unit]
-Description=Restart itgmania when the /var/local/itg-restart flagfile changes.
-
-[Service]
-Type=oneshot
-ExecStart=/bin/bash /usr/libexec/update-itg-restart-flag.sh
-
-[Install]
-WantedBy=default.target

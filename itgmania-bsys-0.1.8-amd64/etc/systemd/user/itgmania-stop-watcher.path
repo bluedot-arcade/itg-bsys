@@ -1,8 +1,0 @@
-[Unit]
-Description=Monitor changes to /var/local/itg-stop flagfile
-
-[Path]
-PathChanged=/var/local/itg-stop
-
-[Install]
-WantedBy=default.target
