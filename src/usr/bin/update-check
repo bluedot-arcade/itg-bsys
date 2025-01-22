@@ -8,6 +8,14 @@ NC='\033[0m'
 FLAG_FILE="/run/user/1000/itg/update-ready"
 UPDATE_SCRIPT="/usr/libexec/do-update-from-media.sh"
 
+# Function to check the last command and exit on failure
+check_error() {
+  if [[ $? -ne 0 ]]; then
+    echo -e "${RED}Error: $1. Exiting.${NC}"
+    exit 1
+  fi
+}
+
 if [ -f $FLAG_FILE ]; then
     CONTENT=$(cat $FLAG_FILE)
     if [[ "$CONTENT" == "1" ]]; then
@@ -18,6 +26,10 @@ if [ -f $FLAG_FILE ]; then
         echo
 
         if [[ $REPLY =~ ^[Yy]$ ]]; then
+            # Elevate to sudo
+            sudo -v
+            check_error "Failed to gain sudo privileges"
+
             $UPDATE_SCRIPT
         else
             echo -e "Update skipped"

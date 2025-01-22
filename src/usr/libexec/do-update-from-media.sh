@@ -72,7 +72,7 @@ fi
 
 if [[ -f "$FLAG_FILE" ]]; then
     echo "0" > "$FLAG_FILE"
-    echo "Flag file set to 1." 
+    echo "Flag file set to 0." 
     sync
 else 
     echo "Error: $FLAG_FILE does not exist."
