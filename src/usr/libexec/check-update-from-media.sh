@@ -3,6 +3,17 @@
 FLAG_FILE="/run/user/1000/itg/update-ready"
 MOUNTPOINT="/mnt/update"
 
+create_flag_file() {
+    if [[ ! -d "$(dirname "$FLAG_FILE")" ]]; then
+        echo "Parent directory does not exist. Creating it..."
+        mkdir -p "$(dirname "$FLAG_FILE")"
+    fi
+
+    echo "0" > "$FLAG_FILE"
+    echo "Flag file created at $FLAG_FILE."
+    sync
+}
+
 cleanup() {
     # Unmount the storage device
     echo "Unmounting device $DEVICE from $MOUNTPOINT..."
@@ -60,14 +71,11 @@ if dpkg-query -W -f='${Version}' itgmania-bsys | grep -q "$(dpkg-deb -f "$PACKAG
     echo "Package is already installed and up-to-date."
 else 
     if [[ -f "$FLAG_FILE" ]]; then
-        echo "1" > "$FLAG_FILE"
-        echo "Flag file set to 1." 
-        sync
-    else 
-        echo "Error: $FLAG_FILE does not exist."
-        cleanup
-        exit 1
+        create_flag_file
     fi
+    echo "1" > "$FLAG_FILE"
+    echo "Flag file set to 1." 
+    sync
 fi
 
 cleanup

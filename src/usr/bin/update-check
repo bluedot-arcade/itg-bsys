@@ -26,5 +26,5 @@ if [ -f $FLAG_FILE ]; then
         echo -e "No update available"
     fi
 else
-    echo -e "${RED}Failed to find update flag file${NC}"
+    echo -e "No update available"
 fi
