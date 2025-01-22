@@ -70,6 +70,7 @@ if ! sudo dpkg -i "$PACKAGE"; then
     exit 1
 fi
 
+# Reset the flag file to 0
 if [[ -f "$FLAG_FILE" ]]; then
     echo "0" | sudo tee "$FLAG_FILE" > /dev/null
     echo "Flag file set to 0." 
@@ -81,6 +82,16 @@ else
 fi
 
 cleanup
+
+# Check for --restart-game parameter
+if [[ "$1" == "--restart-game" ]]; then
+    echo "Restarting game..."
+    if ! systemctl --user start itgmania.service; then
+        echo "Error: Failed to restart game."
+        exit 1
+    fi
+    echo "Game restarted successfully."
+fi
 
 
 

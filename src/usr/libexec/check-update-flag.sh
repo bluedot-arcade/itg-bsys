@@ -20,17 +20,13 @@ reset_flag() {
    sync
 }
 
-update() {
-    echo "Running update script..."
-    $UPDATE_SCRIPT
-}
-
 # Read the content of the file
 if [[ -f "$FLAG_FILE" ]]; then
     CONTENT=$(cat "$FLAG_FILE")
 
     if [[ "$CONTENT" == "1" ]]; then
-        update
+        echo "Running update script..."
+        $UPDATE_SCRIPT --restart-game
     fi
 
     reset_flag
