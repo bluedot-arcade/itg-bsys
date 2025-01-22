@@ -6,7 +6,7 @@ RED='\033[1;31m'
 NC='\033[0m'
 
 FLAG_FILE="/run/user/1000/itg/update-ready"
-UPDATE_SCRIPT="/usr/libexec/do-update-from-media"
+UPDATE_SCRIPT="/usr/libexec/do-update-from-media.sh"
 
 if [ -f $FLAG_FILE ]; then
     CONTENT=$(cat $FLAG_FILE)
