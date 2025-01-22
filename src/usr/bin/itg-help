@@ -58,5 +58,3 @@ print_help() {
 }
 
 print_help
-
-if ! sudo udevadm trigger
