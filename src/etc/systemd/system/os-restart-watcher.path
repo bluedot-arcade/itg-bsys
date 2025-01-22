@@ -1,8 +1,7 @@
 [Unit]
 Description=Monitor changes to /run/user/1000/itg/os-restart flagfile
-After=default.target
-After=user-runtime-dir@1000.service
 Requires=user-runtime-dir@1000.service
+After=multi-user.target user-runtime-dir@1000.service
 
 [Path]
 PathChanged=/run/user/1000/itg/os-restart

@@ -1,8 +1,7 @@
 [Unit]
 Description=Restart OS when the /run/user/1000/itg/os-restart flagfile changes.
-After=default.target
-After=user-runtime-dir@1000.service
 Requires=user-runtime-dir@1000.service
+After=multi-user.target user-runtime-dir@1000.service
 
 [Service]
 Type=oneshot
