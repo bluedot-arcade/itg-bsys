@@ -2,7 +2,7 @@
 Description=Monitor changes to /run/user/1000/itg/update flagfile
 
 [Path]
-PathChanged/run/user/1000/itg/update
+PathChanged=/run/user/1000/itg/update
 
 [Install]
 WantedBy=multi-user.target
