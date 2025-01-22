@@ -1,5 +1,8 @@
 [Unit]
 Description=Perfom media update when the /run/user/1000/itg/update flagfile changes.
+After=default.target
+After=user-runtime-dir@1000.service
+Requires=user-runtime-dir@1000.service
 
 [Service]
 Type=oneshot
