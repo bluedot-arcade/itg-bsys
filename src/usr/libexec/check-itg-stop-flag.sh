@@ -1,8 +1,6 @@
 #!/bin/bash
 
-# Path to the monitored file
-USER_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
-FLAG_FILE="$USER_RUNTIME_DIR/itg/itg-stop"
+FLAG_FILE="/run/user/1000/itg/itg-stop"
 
 create_flag_file() {
     if [[ ! -d "$(dirname "$FLAG_FILE")" ]]; then

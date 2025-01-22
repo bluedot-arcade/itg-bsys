@@ -1,7 +1,7 @@
 #!/bin/bash
 
-MOUNTPOINT="/mnt/update"
 FLAG_FILE="/run/user/1000/itg/update-ready"
+MOUNTPOINT="/mnt/update"
 
 cleanup() {
     # Unmount the storage device

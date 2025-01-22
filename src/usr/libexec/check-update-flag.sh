@@ -1,7 +1,6 @@
 #!/bin/bash
 
-USER_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
-FLAG_FILE="$USER_RUNTIME_DIR/itg/update"
+FLAG_FILE="/run/user/1000/itg/update"
 UPDATE_SCRIPT="/usr/libexec/do-update-from-media.sh"
 
 create_flag_file() {

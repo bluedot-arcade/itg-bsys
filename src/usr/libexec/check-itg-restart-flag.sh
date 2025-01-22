@@ -1,7 +1,6 @@
 #!/bin/bash
 
-USER_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
-FLAG_FILE="$USER_RUNTIME_DIR/itg/itg-restart"
+FLAG_FILE="/run/user/1000/itg/itg-restart"
 
 create_flag_file() {
     if [[ ! -d "$(dirname "$FLAG_FILE")" ]]; then
