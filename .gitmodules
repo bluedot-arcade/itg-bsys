@@ -1,0 +1,3 @@
+[submodule "extern/evhz"]
+	path = extern/evhz
+	url = https://github.com/bluedot-arcade/evhz
