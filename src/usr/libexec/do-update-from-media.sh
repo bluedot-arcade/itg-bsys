@@ -3,6 +3,13 @@
 FLAG_FILE="/run/user/1000/itg/update-ready"
 MOUNTPOINT="/mnt/update"
 
+run_user_systemctl() {
+    echo "Running user systemctl command: systemctl --user -M itg@ $@"
+    if ! sudo systemctl --user -M itg@ "$@"; then
+        echo "ERROR: Failed to run systemctl --user -M itg@ $@"
+    fi
+}
+
 cleanup() {
     # Unmount the storage device
     echo "Unmounting device $DEVICE from $MOUNTPOINT..."
@@ -86,10 +93,7 @@ cleanup
 # Check for --restart-game parameter
 if [[ "$1" == "--restart-game" ]]; then
     echo "Restarting game..."
-    if ! systemctl --user start itgmania.service; then
-        echo "Error: Failed to restart game."
-        exit 1
-    fi
+    run_user_systemctl start itgmania.service
     echo "Game restarted successfully."
 fi
 
