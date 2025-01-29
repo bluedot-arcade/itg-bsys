@@ -24,11 +24,18 @@ cleanup() {
     fi
 }
 
+reset_flag() {
+   echo "0" > "$FLAG_FILE"
+   echo "Flag reset to 0."
+   sync
+}
+
 # Find a storage device with label "BSYS-UPDATE"
 DEVICE=$(lsblk -o NAME,LABEL -l | grep BSYS-UPDATE | awk '{print $1}')
 
 if [[ -z "$DEVICE" ]]; then
     echo "Error: No storage device with label BSYS-UPDATE found."
+    reset_flag
     exit 1
 fi
 
