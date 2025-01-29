@@ -10,6 +10,7 @@ create_flag_file() {
     fi
 
     echo "0" > "$FLAG_FILE"
+    sudo chown itg:itg "$FLAG_FILE"
     echo "Flag file created at $FLAG_FILE."
     sync
 }
