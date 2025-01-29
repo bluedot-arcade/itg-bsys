@@ -49,9 +49,9 @@ run_systemctl stop os-shutdown-watcher.service
 # Update check service
 run_systemctl stop update-check.service
 
-# Update flag watcher
-run_systemctl stop update-watcher.path
-run_systemctl stop update-watcher.service
+# Do not stop otherwise the running update will be interrupted
+# run_systemctl stop update-watcher.path
+# run_systemctl stop update-watcher.service
 
 # IP address listener
 run_systemctl stop ipaddr-listener.service
