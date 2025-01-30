@@ -46,15 +46,15 @@ run_user_systemctl enable obs-streaming-watcher.path
 run_user_systemctl enable obs-streaming-watcher.service
 run_user_systemctl start obs-streaming-watcher.path
 
-# System restart flag watcher
-run_systemctl enable os-restart-watcher.path
-run_systemctl enable os-restart-watcher.service
-run_systemctl start os-restart-watcher.path
+# Restart flag watcher
+run_user_systemctl enable os-restart-watcher.path
+run_user_systemctl enable os-restart-watcher.service
+run_user_systemctl start os-restart-watcher.path
 
-# System shutdown flag watcher
-run_systemctl enable os-shutdown-watcher.path
-run_systemctl enable os-shutdown-watcher.service
-run_systemctl start os-shutdown-watcher.path
+# Shutdown flag watcher
+run_user_systemctl enable os-shutdown-watcher.path
+run_user_systemctl enable os-shutdown-watcher.service
+run_user_systemctl start os-shutdown-watcher.path
 
 # System update flag watcher
 run_systemctl enable update-watcher.path
@@ -64,14 +64,9 @@ run_systemctl start update-watcher.path
 # Update check service
 run_systemctl enable update-check.service
 
-# Update flag watcher
-run_systemctl enable update-watcher.path
-run_systemctl enable update-watcher.service
-run_systemctl start update-watcher.path
-
-# System ipaddr listener
-run_systemctl enable ipaddr-listener.service
-run_systemctl start ipaddr-listener.service
+# Ipaddr listener
+run_user_systemctl enable ipaddr-listener.service
+run_user_systemctl start ipaddr-listener.service
 
 # Udev rules
 echo "Reloading udev rules..."

@@ -22,7 +22,7 @@ reset_flag() {
 
 shutdown_os() {
     echo "Shutting down OS..."
-    shutdown now
+    sudo shutdown now
 }
 
 if [[ -f "$FLAG_FILE" ]]; then

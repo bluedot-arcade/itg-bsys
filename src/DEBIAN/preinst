@@ -39,12 +39,12 @@ run_user_systemctl stop obs-streaming-watcher.service
 run_user_systemctl stop obs-streaming.service
 
 # System restart flag watcher
-run_systemctl stop os-restart-watcher.path
-run_systemctl stop os-restart-watcher.service
+run_user_systemctl stop os-restart-watcher.path
+run_user_systemctl stop os-restart-watcher.service
 
 # System shutdown flag watcher
-run_systemctl stop os-shutdown-watcher.path
-run_systemctl stop os-shutdown-watcher.service
+run_user_systemctl stop os-shutdown-watcher.path
+run_user_systemctl stop os-shutdown-watcher.service
 
 # Update check service
 run_systemctl stop update-check.service

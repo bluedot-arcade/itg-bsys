@@ -22,7 +22,7 @@ reset_flag() {
 
 restart_os() {
     echo "Restarting OS..."
-    reboot
+    sudo reboot
 }
 
 if [[ -f "$FLAG_FILE" ]]; then

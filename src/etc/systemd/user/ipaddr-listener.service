@@ -1,7 +1,5 @@
 [Unit]
 Description=Listen for IP address changes
-Requires=user-runtime-dir@1000.service
-After=multi-user.target user-runtime-dir@1000.service
 
 [Service]
 ExecStart=/bin/bash /usr/libexec/ipaddr-listener.sh
