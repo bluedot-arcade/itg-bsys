@@ -48,7 +48,11 @@ if [ -z "$packageName" ] || [ -z "$packageVersion" ] || [ -z "$packageArch" ]; t
 fi
 
 # Create build directory
-mkdir -p "build"
+mkdir -p "$buildDir"
+
+# Clear the build directory
+echo "Clearing build directory: $buildDir"
+rm -rfv "${buildDir:?}/"*
 
 # Build extern/evhz and copy the output to src/opt/evhz
 build_evhz
