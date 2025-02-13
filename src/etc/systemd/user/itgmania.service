@@ -1,6 +1,7 @@
 [Unit]
 Description=ITGMania Service
-After=sound.target
+Requires=graphical.target
+After=graphical.target
 
 [Service]
 Type=exec
