@@ -2,6 +2,13 @@
 
 set -e  # Exit on error
 
+# Check if the 'build' directory exists and is not empty
+if [ ! -d "build" ] || [ -z "$(ls -A build)" ]; then
+    echo "Error: 'build' directory not found or empty."
+    echo "Hint: Run 'build.sh' first."
+    exit 1
+fi
+
 echo "Listing available disks..."
 DISKS=($(lsblk -dpno NAME | grep -E "/dev/sd|/dev/nvme"))
 NUM_DISKS=${#DISKS[@]}
