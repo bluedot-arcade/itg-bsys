@@ -61,12 +61,12 @@ run_systemctl enable update-watcher.path
 run_systemctl enable update-watcher.service
 run_systemctl start update-watcher.path
 
-# Update check service
-run_systemctl enable update-check.service
-
 # Ipaddr listener
 run_user_systemctl enable ipaddr-listener.service
 run_user_systemctl start ipaddr-listener.service
+
+# Update check service
+run_systemctl enable update-check.service
 
 # Udev rules
 echo "Reloading udev rules..."

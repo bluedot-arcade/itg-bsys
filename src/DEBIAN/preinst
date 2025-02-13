@@ -46,6 +46,9 @@ run_user_systemctl stop os-restart-watcher.service
 run_user_systemctl stop os-shutdown-watcher.path
 run_user_systemctl stop os-shutdown-watcher.service
 
+# IP address listener
+run_user_systemctl stop ipaddr-listener.service
+
 # Update check service
 run_systemctl stop update-check.service
 
@@ -53,6 +56,4 @@ run_systemctl stop update-check.service
 # run_systemctl stop update-watcher.path
 # run_systemctl stop update-watcher.service
 
-# IP address listener
-run_systemctl stop ipaddr-listener.service
 
