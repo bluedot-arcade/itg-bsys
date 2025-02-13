@@ -45,9 +45,9 @@ print_help() {
     # Streaming Commands
     echo -e "${CYAN}Streaming Commands:${RESET}"
     echo ""
-    echo -e "  itg-stream-start        - Start streaming the game window over UDP."
-    echo -e "  itg-stream-stop         - Stop streaming the game window over UDP."
-    echo -e "  itg-stream-status       - Check if the game is being streamed over UDP."
+    echo -e "  itg-stream-start        - Start streaming the game window over RTMP."
+    echo -e "  itg-stream-stop         - Stop streaming the game window over RTMP."
+    echo -e "  itg-stream-status       - Check if the game is being streamed over RTMP."
     echo ""
 
     # Update Commands
