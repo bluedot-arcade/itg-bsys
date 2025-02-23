@@ -1,8 +1,10 @@
 [Unit]
 Description=Monitor changes to /run/user/1000/itg/update flagfile
+After=graphical.target
+Requires=graphical.target
 
 [Path]
 PathChanged=/run/user/1000/itg/update
 
 [Install]
-WantedBy=default.target
+WantedBy=graphical.target
