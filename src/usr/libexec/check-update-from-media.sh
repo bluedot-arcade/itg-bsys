@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FLAG_FILE="/run/user/1000/itg/update-ready"
+FLAG_FILE="/run/itg/update-ready"
 MOUNTPOINT="/mnt/update"
 
 create_flag_file() {

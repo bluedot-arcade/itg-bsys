@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FLAG_FILE="/run/user/1000/itg/update"
+FLAG_FILE="/run/itg/update"
 UPDATE_SCRIPT="/usr/libexec/do-update-from-media.sh"
 
 create_flag_file() {

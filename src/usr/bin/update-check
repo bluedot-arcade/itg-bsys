@@ -5,7 +5,7 @@ GREEN='\033[1;32m'
 RED='\033[1;31m'
 NC='\033[0m'
 
-FLAG_FILE="/run/user/1000/itg/update-ready"
+FLAG_FILE="/run/itg/update-ready"
 UPDATE_SCRIPT="/usr/libexec/do-update-from-media.sh"
 
 # Function to check the last command and exit on failure

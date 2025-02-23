@@ -1,11 +1,9 @@
 [Unit]
-Description=Perfom media update when the /run/user/1000/itg/update flagfile changes.
-After=graphical.target
-Requires=graphical.target
+Description=Perfom media update when the /run/itg/update flagfile changes.
 
 [Service]
 Type=oneshot
 ExecStart=/bin/bash /usr/libexec/check-update-flag.sh
 
 [Install]
-WantedBy=graphical.target
+WantedBy=multi-user.target
