@@ -6,4 +6,4 @@ Type=oneshot
 ExecStart=/bin/bash /usr/libexec/check-update-from-media.sh
 
 [Install]
-WantedBy=default.target
+WantedBy=multi-user.target

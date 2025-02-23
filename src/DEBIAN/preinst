@@ -50,7 +50,7 @@ run_user_systemctl stop os-shutdown-watcher.service
 run_user_systemctl stop ipaddr-listener.service
 
 # Update check service
-run_user_systemctl stop update-check.service
+run_systemctl stop update-check.service
 
 # Do not stop otherwise the running update will be interrupted
 # run_systemctl stop update-watcher.path

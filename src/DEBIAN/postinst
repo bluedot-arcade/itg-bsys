@@ -57,16 +57,16 @@ run_user_systemctl enable os-shutdown-watcher.service
 run_user_systemctl start os-shutdown-watcher.path
 
 # System update flag watcher
-run_user_systemctl enable update-watcher.path
-run_user_systemctl enable update-watcher.service
-run_user_systemctl start update-watcher.path
+run_systemctl enable update-watcher.path
+run_systemctl enable update-watcher.service
+run_systemctl start update-watcher.path
 
 # Ipaddr listener
 run_user_systemctl enable ipaddr-listener.service
 run_user_systemctl start ipaddr-listener.service
 
 # Update check service
-run_user_systemctl enable update-check.service
+run_systemctl enable update-check.service
 
 # Udev rules
 echo "Reloading udev rules..."
