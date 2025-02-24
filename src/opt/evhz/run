@@ -1,3 +1,0 @@
-#!/bin/bash
-[[ $EUID == 0 ]] || s=sudo
-$s ./evhz "$@"
