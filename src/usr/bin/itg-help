@@ -53,7 +53,9 @@ print_help() {
     # Update Commands
     echo -e "${CYAN}Update Commands:${RESET}"
     echo ""
-    echo -e "  update-check            - Check if an update is available."
+    echo -e "  update-check-media      - Check if an update is available on a USB media."
+    echo -e "  update-check-online     - Check if an update is available online."
+    echo -e
     echo ""
 }
 

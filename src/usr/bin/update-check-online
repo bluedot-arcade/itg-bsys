@@ -1,0 +1,77 @@
+#!/bin/bash
+
+# Colors for readability
+GREEN='\033[1;32m'
+RED='\033[1;31m'
+NC='\033[0m'
+
+GITHUB_REPO="bluedot-arcade/itg-bsys"
+LATEST_RELEASE_URL="https://api.github.com/repos/$GITHUB_REPO/releases/latest"
+TMP_DIR="/tmp"
+PACKAGE_NAME="itgmania-bsys"
+
+# Function to check the last command and exit on failure
+check_error() {
+  if [[ $? -ne 0 ]]; then
+    echo -e "${RED}Error: $1. Exiting.${NC}"
+    exit 1
+  fi
+}
+
+# Get the system architecture
+ARCH=$(dpkg --print-architecture)
+
+# Get the currently installed version
+INSTALLED_VERSION=$(dpkg-query --showformat='${Version}' --show $PACKAGE_NAME 2>/dev/null)
+
+# Get the latest release version from GitHub
+LATEST_VERSION=$(wget -qO- $LATEST_RELEASE_URL | grep -oP '"tag_name": "\K[^"]+')
+LATEST_VERSION=${LATEST_VERSION#v}
+check_error "Failed to fetch latest release info from GitHub"
+
+# Print found versions
+echo -e "Installed version: ${INSTALLED_VERSION}"
+echo -e "Latest online version: ${LATEST_VERSION}"
+
+# Check if an update is available
+if [[ "$INSTALLED_VERSION" == "$LATEST_VERSION" ]]; then
+  echo -e "${GREEN}You already have the latest version installed (${INSTALLED_VERSION}).${NC}"
+  
+  # Ask if the user wants to install the latest version anyway
+  read -p "Do you want to install the latest version anyway? [n/Y] " -n 1 -r
+  echo
+  if [[ ! $REPLY =~ ^[Yy]$ ]] && [[ ! -z $REPLY ]]; then
+    echo -e "${RED}Update canceled.${NC}"
+    exit 0
+  fi
+else
+  echo -e "${GREEN}A new update is available (${LATEST_VERSION}).${NC}"
+
+  # Always ask user if they want to update
+  read -p "Do you want to update to the latest version? [n/Y] " -n 1 -r
+  echo
+  if [[ ! $REPLY =~ ^[Yy]$ ]] && [[ ! -z $REPLY ]]; then
+    echo -e "${RED}Update canceled.${NC}"
+    exit 0
+  fi
+fi
+
+# Get the .deb file download URL using wget
+DEB_URL=$(wget -qO- $LATEST_RELEASE_URL | grep -oP '"browser_download_url": "\K[^"]+' | grep "$PACKAGE_NAME-$LATEST_VERSION-$ARCH.deb")
+check_error "Failed to fetch .deb file URL"
+
+# Get the filename from the URL
+DEB_FILE="$TMP_DIR/$(basename "$DEB_URL")"
+
+echo -e "${GREEN}Downloading $DEB_URL...${NC}"
+wget --show-progress -O "$DEB_FILE" "$DEB_URL"
+check_error "Failed to download .deb package"
+
+# Install the .deb file
+sudo dpkg -i "$DEB_FILE"
+check_error "Failed to install .deb package"
+
+# Cleanup
+rm -f "$DEB_FILE"
+
+echo -e "${GREEN}Update successful!${NC}"
