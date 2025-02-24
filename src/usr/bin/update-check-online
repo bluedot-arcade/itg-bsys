@@ -38,7 +38,7 @@ if [[ "$INSTALLED_VERSION" == "$LATEST_VERSION" ]]; then
   echo -e "${GREEN}You already have the latest version installed (${INSTALLED_VERSION}).${NC}"
   
   # Ask if the user wants to install the latest version anyway
-  read -p "Do you want to install the latest version anyway? [n/Y] " -n 1 -r
+  read -p "Do you want to install the latest version anyway? [y/N] " -n 1 -r
   echo
   if [[ ! $REPLY =~ ^[Yy]$ ]] && [[ ! -z $REPLY ]]; then
     echo -e "${RED}Update canceled.${NC}"
@@ -48,7 +48,7 @@ else
   echo -e "${GREEN}A new update is available (${LATEST_VERSION}).${NC}"
 
   # Always ask user if they want to update
-  read -p "Do you want to update to the latest version? [n/Y] " -n 1 -r
+  read -p "Do you want to update to the latest version? [y/N] " -n 1 -r
   echo
   if [[ ! $REPLY =~ ^[Yy]$ ]] && [[ ! -z $REPLY ]]; then
     echo -e "${RED}Update canceled.${NC}"
