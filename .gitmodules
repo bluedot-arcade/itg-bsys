@@ -1,3 +1,6 @@
 [submodule "extern/evhz"]
 	path = extern/evhz
 	url = https://github.com/bluedot-arcade/evhz
+[submodule "extern/itgmania"]
+	path = extern/itgmania
+	url = https://github.com/dando92/itgmania

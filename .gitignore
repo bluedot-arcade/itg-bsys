@@ -1,4 +1,5 @@
 src/opt/itgmania
+src/opt/evhz
 
 # Ignore build outputs
 build
