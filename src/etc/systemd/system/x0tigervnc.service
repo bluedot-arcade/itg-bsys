@@ -9,7 +9,7 @@ User=itg
 Group=itg
 WorkingDirectory=/home/itg
 Environment="DISPLAY=:0"
-ExecStart=/usr/bin/x0tigervncserver -rfbport 5901 -localhost no
+ExecStart=/usr/bin/x0tigervncserver -rfbport 5901 -localhost -SecurityTypes=None
 ExecStop=/usr/bin/killall x0tigervncserver
 Restart=always
 
