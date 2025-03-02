@@ -57,6 +57,15 @@ print_help() {
     echo -e "  update-check-online     - Check if an update is available online."
     echo -e
     echo ""
+
+    # BlueNet VPN Commands
+    echo -e "${CYAN}BlueNet VPN Commands:${RESET}"
+    echo ""
+    echo -e "  bnet-check              - Check the BlueNet VPN connection status."
+    echo -e "  bnet-enable             - Enable the BlueNet VPN connection (Stays enabled accross reboots)."
+    echo -e "  bnet-disable            - Disable the BlueNet VPN connection (Stays disabled accross reboots)."
+    echo -e "  bnet-connect            - Connect to the BlueNet VPN (Resets on reboot if connection disabled)."
+    echo -e "  bnet-disconnect         - Disconnect from the BlueNet VPN (Resets on reboot if connection enabled)."
 }
 
 print_help

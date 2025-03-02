@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sudo systemctl stop wg-quick@bnet0
+sudo systemctl disable wg-quick@bnet0

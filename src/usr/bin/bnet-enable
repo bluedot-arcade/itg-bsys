@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sudo systemctl enable wg-quick@bnet0
+sudo systemctl start wg-quick@bnet0

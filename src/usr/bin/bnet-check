@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Colors for readability
+GREEN='\033[1;32m'
+RED='\033[1;31m'
+NC='\033[0m'
+
+BNET_SERVER_IP=10.0.0.1
+BNET_SERVER_PING_TIMEOUT=2
+
+echo -e "Checking BlueNet VPN network connection... "
+echo -e "Server IP: $BNET_SERVER_IP"
+
+echo -n "Client IP: "
+ip a show wg0 | grep inet | awk '{print $2}' | cut -d/ -f1
+
+ping -c 1 -W $BNET_SERVER_PING_TIMEOUT $BNET_SERVER_IP > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+    echo -e "Status: ${GREEN}CONNECTED${NC}"
+else
+    echo -e "Status: ${RED}DISCONNECTED${NC}"
+fi
+
+
+
+
