@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sudo systemctl enable x0tigervnc.service
+sudo systemctl start x0tigervnc.service
