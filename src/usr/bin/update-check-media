@@ -22,7 +22,7 @@ if [ -f $FLAG_FILE ]; then
         echo -e "${GREEN}A new update is ready to be installed!${NC}"
 
         # Ask the user if they want to install the update
-        read -p "Do you want to install the update now? [Y/n] " -n 1 -r
+        read -p "Do you want to install the update now? [y/N] " -n 1 -r
         echo
 
         if [[ $REPLY =~ ^[Yy]$ ]]; then
