@@ -13,7 +13,7 @@ echo -e "Checking BlueNet VPN network connection... "
 echo -e "Server IP: $BNET_SERVER_IP"
 
 echo -n "Client IP: "
-ip a show $BNET_INTERACE | grep inet | awk '{print $2}' | cut -d/ -f1
+ip a show $BNET_INTERFACE | grep inet | awk '{print $2}' | cut -d/ -f1
 
 ping -c 1 -W $BNET_SERVER_PING_TIMEOUT $BNET_SERVER_IP > /dev/null 2>&1
 if [ $? -eq 0 ]; then
