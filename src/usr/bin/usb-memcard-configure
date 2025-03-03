@@ -19,7 +19,6 @@ show_preamble() {
   echo -e "                                                              "
   echo -e " Proceed with caution as this will update the /etc/fstab file. "
   echo -e "**************************************************************\n"
-  echo -e "Proceeding with the USB configuration...\n"
 }
 
 check_error() {
@@ -124,15 +123,94 @@ configure_memcard_for_player() {
     done
 }
 
+check_preferences() {
+    local prefs_file="/mnt/data/itgmania/Save/Preferences.ini"
+
+    declare -A required_values=(
+        ["MemoryCardDriver"]="USB"
+        ["MemoryCardOsMountPointP1"]="/mnt/player1"
+        ["MemoryCardOsMountPointP2"]="/mnt/player2"
+        ["MemoryCardPadmissEnabled"]="0"
+        ["MemoryCardProfileImportSubdirs"]="StepMania 5.1;StepMania 5;In The Groove 2"
+        ["MemoryCardProfileSubdir"]="ITGmania"
+        ["MemoryCardProfiles"]="1"
+        ["MemoryCardUsbBusP1"]="-1"
+        ["MemoryCardUsbBusP2"]="-1"
+        ["MemoryCardUsbLevelP1"]="-1"
+        ["MemoryCardUsbLevelP2"]="-1"
+        ["MemoryCardUsbPortP1"]="-1"
+        ["MemoryCardUsbPortP2"]="-1"
+        ["MemoryCards"]="1"
+    )
+
+    # Define an ordered array of keys
+    keys_order=(
+        "MemoryCardDriver"
+        "MemoryCardOsMountPointP1"
+        "MemoryCardOsMountPointP2"
+        "MemoryCardPadmissEnabled"
+        "MemoryCardProfileImportSubdirs"
+        "MemoryCardProfileSubdir"
+        "MemoryCardProfiles"
+        "MemoryCardUsbBusP1"
+        "MemoryCardUsbBusP2"
+        "MemoryCardUsbLevelP1"
+        "MemoryCardUsbLevelP2"
+        "MemoryCardUsbPortP1"
+        "MemoryCardUsbPortP2"
+        "MemoryCards"
+    )
+
+    if [[ ! -f "$prefs_file" ]]; then
+        echo -e "${RED}Preferences file not found: $prefs_file${NC}"
+        return
+    fi
+
+    local all_correct=true
+
+    while IFS='=' read -r key value; do
+        key=$(echo "$key" | tr -d '\r' | xargs)
+        value=$(echo "$value" | tr -d '\r' | xargs)
+        if [[ -n "${required_values[$key]}" && "${required_values[$key]}" != "$value" ]]; then
+            echo -e "${RED}Warning: $key is set to '$value' but should be '${required_values[$key]}'${NC}"
+            all_correct=false
+        fi
+    done < <(grep -E "^($(IFS='|'; echo "${keys_order[*]}")=)" "$prefs_file")
+
+    if $all_correct; then
+        echo -e "${GREEN}Preferences.ini seems configured correctly.${NC}"
+    else
+        echo -e ""
+        echo -e "This is how it should look:\n"
+        
+        # Print required values in the correct order
+        for key in "${keys_order[@]}"; do
+            echo -e "$key=${required_values[$key]}"
+        done
+
+        echo -e ""
+        echo -e "${RED}Please update Preferences.ini with the correct values.${NC}"
+        echo -e "You can edit the Preferences.ini by using the ${BLUE}itg-pref${NC} command."
+    fi
+}
+
 # Elevate to sudo
 sudo -v
 check_error "Failed to gain sudo privileges"
 
 show_preamble
 
+echo -e "Checking Preferences.ini settings..."
+check_preferences
+echo -e ""
+
+echo -e "Proceeding with the USB configuration..."
+echo -e ""
+
 configure_memcard_for_player 1
 echo -e "${GREEN}USB Memory card for Player 1 configured.${NC}"
 
 configure_memcard_for_player 2
 echo -e "${GREEN}USB Memory card for Player 2 configured.${NC}"
-echo -e "Exiting."
+
+echo -e "${GREEN}Configuration complete. Exiting.${NC}"
