@@ -1,0 +1,3 @@
+#!/bin/bash
+
+nano /mnt/data/itgmania/Save/Startup.ini

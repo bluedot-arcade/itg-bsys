@@ -22,6 +22,7 @@ print_help() {
     echo -e "  itg-stop                - Stop the game."
     echo -e "  itg-restart             - Restart the game."
     echo -e "  itg-pref                - Show/Edit Preferences.ini."
+    echo -e "  itg-pref-startup        - Show/Edit Startup.ini (game startup preferences)."
     echo -e "  itg-data                - Show game data folder in Nautilus."
     echo -e "  itg-reset               - Reset the game settings to default."
     echo ""

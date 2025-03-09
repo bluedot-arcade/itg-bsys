@@ -1,7 +1,7 @@
 [Unit]
 Description=ITGMania Service
-Requires=graphical-session.target
-After=graphical-session.target
+Requires=default.target
+After=default.target
 
 [Service]
 Type=exec
