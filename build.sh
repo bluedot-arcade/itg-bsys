@@ -3,13 +3,23 @@
 srcDir="src"
 buildDir="build"
 controlFile="${srcDir}/DEBIAN/control"
+build_itgmania_flag=true  # Default is true, i.e., build ITGmania
+
+# Check for command-line arguments
+for arg in "$@"; do
+  case $arg in
+    --no-itgmania)
+      build_itgmania_flag=false  # Set to false if --no-itgmania is provided
+      shift
+      ;;
+  esac
+done
 
 build_evhz() {
   echo "=============================="
   echo "Building evhz..."
   echo "=============================="
   
-  # Build evhz
   make -C extern/evhz
   if [ $? -ne 0 ]; then
     echo "Error: Failed to build evhz."
@@ -28,6 +38,42 @@ build_evhz() {
   echo "Copying files to: ${srcDir}/opt/evhz"
   cp -arv extern/evhz/build/* "${srcDir}/opt/evhz"
   echo ""
+}
+
+build_itgmania() {
+  echo "=============================="
+  echo "Building ITGmania..."
+  echo "=============================="
+  
+  sudo extern/itgmania/Utils/build-release-linux.sh
+  if [ $? -ne 0 ]; then
+    echo "Error: Failed to build ITGmania."
+    exit 1
+  fi
+
+  buildArchive="extern/itgmania/Build/release/ITGmania-0.9.0-Linux-no-songs.tar.gz"
+  tempDir="/tmp/itgmania_build"
+
+  if [ ! -f "$buildArchive" ]; then
+    echo "Error: ITGmania build archive not found at $buildArchive"
+    exit 1
+  fi
+
+  echo "Extracting ITGmania build archive..."
+  mkdir -p "$tempDir"
+  tar -xzf "$buildArchive" -C "$tempDir"
+
+  # Ensure only the last 'itgmania' folder is copied to src/opt
+  extractedDir="$tempDir/ITGmania-0.9.0-Linux-no-songs/itgmania"
+  
+  if [ ! -d "$extractedDir" ]; then
+    echo "Error: Directory $extractedDir not found in the extracted archive."
+    exit 1
+  fi
+
+  echo "Copying itgmania folder to: ${srcDir}/opt"
+  cp -arv "$extractedDir" "${srcDir}/opt"
+  rm -rf "$tempDir"
 }
 
 # Verify the control file exists
@@ -57,6 +103,11 @@ rm -rfv "${buildDir:?}/"*
 # Build extern/evhz and copy the output to src/opt/evhz
 build_evhz
 
+# Optionally build ITGmania and copy output to src/opt
+if [ "$build_itgmania_flag" = true ]; then
+  build_itgmania
+fi
+
 # Construct the output .deb file name
 outputFile="${buildDir}/${packageName}-${packageVersion}-${packageArch}.deb"
 
@@ -64,7 +115,6 @@ echo "=============================="
 echo "Building debian package..."
 echo "=============================="
 
-# Build the .deb package
 dpkg-deb --build "$srcDir" "$outputFile"
 
 if [ $? -eq 0 ]; then

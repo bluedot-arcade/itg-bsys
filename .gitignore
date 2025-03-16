@@ -1,5 +1,7 @@
-src/opt/itgmania
+build
+
 src/opt/evhz
 
-# Ignore build outputs
-build
+src/opt/itgmania
+!src/opt/itgmania/start.sh
+!src/opt/itgmania/Defaults
