@@ -6,7 +6,7 @@ RED='\033[1;31m'
 NC='\033[0m'
 
 BNET_INTERFACE=bnet0
-BNET_SERVER_IP=10.0.0.1
+BNET_SERVER_IP=10.10.0.1
 BNET_SERVER_PING_TIMEOUT=2
 
 echo -e "Checking BlueNet VPN network connection... "

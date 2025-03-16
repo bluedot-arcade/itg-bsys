@@ -2,7 +2,7 @@
 
 IP_FILE="/run/user/1000/itg/ipaddr"
 CHECK_INTERVAL=20  # Time in seconds to wait between each check for IP address changes
-BNET_SERVER_IP="10.0.0.1"
+BNET_SERVER_IP="10.10.0.1"
 BNET_SERVER_PING_TIMEOUT=2
 
 get_current_ips() {
