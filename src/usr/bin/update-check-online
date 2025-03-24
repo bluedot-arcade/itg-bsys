@@ -18,6 +18,18 @@ check_error() {
   fi
 }
 
+# Function to compare versions
+version_greater_or_equal() {
+  local v1=(${1//./ })
+  local v2=(${2//./ })
+  for i in 0 1 2; do
+    [[ ${v1[i]:-0} -gt ${v2[i]:-0} ]] && return 0
+    [[ ${v1[i]:-0} -lt ${v2[i]:-0} ]] && return 1
+  done
+  return 0
+}
+
+
 # Get the system architecture
 ARCH=$(dpkg --print-architecture)
 
@@ -34,13 +46,13 @@ echo -e "Installed version: ${INSTALLED_VERSION}"
 echo -e "Latest online version: ${LATEST_VERSION}"
 
 # Check if an update is available
-if [[ "$INSTALLED_VERSION" == "$LATEST_VERSION" ]]; then
+if version_greater_or_equal "$INSTALLED_VERSION" "$LATEST_VERSION"; then
   echo -e "${GREEN}You already have the latest version installed (${INSTALLED_VERSION}).${NC}"
   
   # Ask if the user wants to install the latest version anyway
   read -p "Do you want to install the latest version anyway? [y/N] " -n 1 -r
   echo
-  if [[ ! $REPLY =~ ^[Yy]$ ]] && [[ ! -z $REPLY ]]; then
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     echo -e "${RED}Update canceled.${NC}"
     exit 0
   fi
@@ -50,7 +62,7 @@ else
   # Always ask user if they want to update
   read -p "Do you want to update to the latest version? [y/N] " -n 1 -r
   echo
-  if [[ ! $REPLY =~ ^[Yy]$ ]] && [[ ! -z $REPLY ]]; then
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     echo -e "${RED}Update canceled.${NC}"
     exit 0
   fi
