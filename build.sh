@@ -45,29 +45,36 @@ build_itgmania() {
   echo "Building ITGmania..."
   echo "=============================="
   
+  # Remove old build directory before starting
+  echo "Deleting old ITGmania build directory..."
+  sudo rm -rf extern/itgmania/Build/release
+
   sudo extern/itgmania/Utils/build-release-linux.sh
   if [ $? -ne 0 ]; then
     echo "Error: Failed to build ITGmania."
     exit 1
   fi
 
-  buildArchive="extern/itgmania/Build/release/ITGmania-0.9.0-Linux-no-songs.tar.gz"
-  tempDir="/tmp/itgmania_build"
+  # Find the latest no-songs.tar.gz file
+  buildArchive=$(ls -t extern/itgmania/Build/release/ITGmania-*-Linux-no-songs.tar.gz | head -n 1)
 
-  if [ ! -f "$buildArchive" ]; then
-    echo "Error: ITGmania build archive not found at $buildArchive"
+  if [ -z "$buildArchive" ]; then
+    echo "Error: No ITGmania build archive found."
     exit 1
   fi
 
+  echo "Using ITGmania build archive: $buildArchive"
+
+  tempDir="/tmp/itgmania_build"
   echo "Extracting ITGmania build archive..."
   mkdir -p "$tempDir"
   tar -xzf "$buildArchive" -C "$tempDir"
 
-  # Ensure only the last 'itgmania' folder is copied to src/opt
-  extractedDir="$tempDir/ITGmania-0.9.0-Linux-no-songs/itgmania"
-  
-  if [ ! -d "$extractedDir" ]; then
-    echo "Error: Directory $extractedDir not found in the extracted archive."
+  # Find the extracted directory
+  extractedDir=$(find "$tempDir" -maxdepth 2 -type d -name "itgmania" | head -n 1)
+
+  if [ -z "$extractedDir" ]; then
+    echo "Error: ITGmania directory not found in the extracted archive."
     exit 1
   fi
 
