@@ -2,7 +2,7 @@
 Type=Application
 Name=ITGMania
 Exec=systemctl --user start itgmania.service
-#Icon=/opt/itgmania/Data/logo.svg
+Icon=/opt/itgmania/Data/logo.svg
 Terminal=false
 Categories=Utility;
 
