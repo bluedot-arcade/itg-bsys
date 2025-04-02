@@ -84,4 +84,7 @@ if ! sudo udevadm trigger; then
     exit 1
 fi
 
+# Reload gtk icon cache
+gtk-update-icon-cache
+
 echo "Postinst script execution completed successfully."
