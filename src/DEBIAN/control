@@ -1,7 +1,6 @@
 Package: itgmania-bsys
-Version: 0.4.1
+Version: 0.4.2
 Architecture: amd64
 Maintainer: Bluedot Arcade <bluedotarcade@gmail.com>
-Depends: bash, systemd, udev
+Depends: bash, systemd, udev, unclutter-xfixes
 Description: Custom ITGMania build with associated services and scripts.
- 

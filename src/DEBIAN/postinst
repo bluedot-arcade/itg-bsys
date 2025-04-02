@@ -65,6 +65,11 @@ run_systemctl start update-watcher.path
 run_user_systemctl enable ipaddr-listener.service
 run_user_systemctl start ipaddr-listener.service
 
+# Unclutter service
+run_user_systemctl enable unclutter.service
+run_user_systemctl enable unclutter.timer
+run_user_systemctl start unclutter.timer
+
 # Update check service
 run_systemctl enable update-check.service
 

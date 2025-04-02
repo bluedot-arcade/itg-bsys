@@ -1,0 +1,7 @@
+[Unit]
+Description=Hide Mouse Cursor
+After=graphical.target
+
+[Service]
+ExecStart=/usr/bin/unclutter-xfixes --timeout 0
+Restart=no

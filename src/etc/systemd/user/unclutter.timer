@@ -1,0 +1,9 @@
+[Unit]
+Description=Run unclutter every 20 seconds
+
+[Timer]
+OnUnitActiveSec=20s
+Unit=unclutter.service
+
+[Install]
+WantedBy=timers.target
