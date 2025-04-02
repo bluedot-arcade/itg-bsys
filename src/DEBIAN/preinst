@@ -50,8 +50,8 @@ run_user_systemctl stop os-shutdown-watcher.service
 run_user_systemctl stop ipaddr-listener.service
 
 # Unclutter service
-run_user_systemctl stop unclutter.service
 run_user_systemctl stop unclutter.timer
+run_user_systemctl stop unclutter.service
 
 # Update check service
 run_systemctl stop update-check.service
