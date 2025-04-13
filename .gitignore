@@ -5,3 +5,5 @@ src/opt/evhz
 src/opt/itgmania
 !src/opt/itgmania/start.sh
 !src/opt/itgmania/Defaults
+
+scripts/*.xz
