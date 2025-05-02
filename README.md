@@ -26,6 +26,12 @@ scripts used on the itgmania bluesys image.
 
     This will build the `.deb` package in the `build` directory.
 
+    NOTE: you can skip building itgmania for subsequent builts by using the `--no-itgmania` flag.
+
+    ```bash
+    ./build.sh --no-itgmania
+    ```
+
 ## Create an update media
 
 An update media is a drive that can be connected to the target system
