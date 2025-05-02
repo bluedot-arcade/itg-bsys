@@ -1,0 +1,11 @@
+[Unit]
+Description=Devilspie2 window matching daemon
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/devilspie2
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

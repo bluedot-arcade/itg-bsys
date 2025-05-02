@@ -8,6 +8,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
     cat > "$CONFIG_FILE" <<EOL
 [Options]
 service-mode-on-exit=true
+windowed-borderless=false
 
 [Gamescope]
 enabled=true
@@ -32,6 +33,7 @@ done
 
 # Read settings from Startup.ini using grep and sed to avoid picking up the wrong line
 SERVICE_MODE_ON_EXIT=$(grep -m1 -oP '^service-mode-on-exit=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
+WINDOWED_BORDERLESS=$(grep -m1 -oP '^windowed-borderless=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 GAMESCOPE_ENABLED=$(grep -m1 -oP '^enabled=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 AUTO_RESOLUTION=$(grep -m1 -oP '^auto-resolution=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 AUTO_REFRESHRATE=$(grep -m1 -oP '^auto-refreshrate=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
@@ -53,8 +55,16 @@ if [ "$AUTO_REFRESHRATE" == "true" ]; then
 fi
 
 # Print detected or configured values
-echo "Resolution: ${RESOLUTION_W}x${RESOLUTION_H}"
-echo "Refresh Rate: ${REFRESH_RATE}Hz"
+echo "Configuration loaded from $CONFIG_FILE"
+echo "Service Mode on Exit: $SERVICE_MODE_ON_EXIT"
+echo "Windowed Borderless: $WINDOWED_BORDERLESS"
+echo "Gamescope Enabled: $GAMESCOPE_ENABLED"
+echo "  Auto Resolution: $AUTO_RESOLUTION"
+echo "  Auto Refresh Rate: $AUTO_REFRESHRATE"
+echo "  Resolution Width: $RESOLUTION_W"
+echo "  Resolution Height: $RESOLUTION_H"
+echo "  Refresh Rate: $REFRESH_RATE"
+echo "  Realtime Mode: $REALTIME_MODE"
 
 # Start ITGMania with Gamescope if enabled
 if [ "$GAMESCOPE_ENABLED" == "true" ]; then
@@ -72,7 +82,15 @@ if [ "$GAMESCOPE_ENABLED" == "true" ]; then
     # Run the final gamescope command with ITGMania
     $GAMESCOPE_CMD -- /opt/itgmania/itgmania
 else
-    echo "Starting ITGMania without Gamescope..."
+    if [ "$WINDOWED_BORDERLESS" == "true" ]; then
+        echo "Restarting devilspie2 service..."
+        systemctl --user restart devilspie2.service
+    else
+        echo "Stopping devilspie2 service..."
+        systemctl --user stop devilspie2.service
+    fi
+
+    echo "Starting ITGMania..."
     /opt/itgmania/itgmania
 fi
 
