@@ -71,7 +71,7 @@ fi
 
 # Install the package
 echo "Installing package $PACKAGE..."
-if ! sudo dpkg -i "$PACKAGE"; then
+if ! sudo apt install -f "$PACKAGE"; then
     echo "Error: Failed to install package $PACKAGE."
     cleanup
     exit 1

@@ -80,7 +80,7 @@ wget --show-progress -O "$DEB_FILE" "$DEB_URL"
 check_error "Failed to download .deb package"
 
 # Install the .deb file
-sudo dpkg -i "$DEB_FILE"
+sudo apt install -f "$DEB_FILE"
 check_error "Failed to install .deb package"
 
 # Cleanup
