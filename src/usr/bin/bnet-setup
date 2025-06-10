@@ -1,0 +1,99 @@
+#!/bin/bash
+
+# BlueNet VPN Setup Script
+
+# --- Colors for Output ---
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+NC='\033[0m'
+
+# --- Configuration ---
+REMOTE_MANAGEMENT_URL="https://vpn.bluedotarcade.com"
+BNET_CONFIG_DIR="/etc/bnet"
+BNET_CONFIG_FILE="$BNET_CONFIG_DIR/bnet.config"
+
+# --- Functions ---
+
+# Function to check for errors and exit
+check_error() {
+  if [[ $? -ne 0 ]]; then
+    echo -e "${RED}Error: $1. Exiting.${NC}"
+    exit 1
+  fi
+}
+
+# --- Main Script Logic ---
+
+echo "--- BlueNet VPN Setup Script ---"
+
+# Elevate to sudo
+sudo -v
+check_error "Failed to gain sudo privileges. Please ensure you have sudo permissions."
+
+# Check if NetBird (BlueNet VPN client) is installed
+if ! command -v netbird &> /dev/null; then
+    echo -e "${RED}Error: BlueNet VPN (netbird client) is not found. Please run 'bnet-install' first.${NC}"
+    exit 1
+fi
+
+# Step: Create config directory if it doesn't exist
+if [ ! -d "$BNET_CONFIG_DIR" ]; then
+    echo -e "${YELLOW}Creating configuration directory: $BNET_CONFIG_DIR${NC}"
+    sudo mkdir -p "$BNET_CONFIG_DIR"
+    check_error "Failed to create configuration directory $BNET_CONFIG_DIR."
+fi
+
+# Step: Load SETUP_KEY from config file
+echo "Loading setup key from $BNET_CONFIG_FILE..."
+if [ ! -f "$BNET_CONFIG_FILE" ]; then
+    echo -e "${RED}Error: Configuration file not found: $BNET_CONFIG_FILE${NC}"
+    echo -e "${YELLOW}Please create this file with the following content:${NC}"
+    echo -e "${YELLOW}  SETUP_KEY=\"your_actual_key_here\"${NC}"
+    echo -e "${YELLOW}And replace 'your_actual_key_here' with your BlueNet VPN setup key.${NC}"
+    exit 1
+fi
+
+# Source the configuration file to load SETUP_KEY
+source "$BNET_CONFIG_FILE"
+check_error "Failed to load configuration from $BNET_CONFIG_FILE. Check its format and permissions."
+
+# Validate SETUP_KEY after loading
+if [ -z "$SETUP_KEY" ] || [ "$SETUP_KEY" == "your_actual_key_here" ]; then
+    echo -e "${RED}Error: SETUP_KEY not found or is still default in $BNET_CONFIG_FILE.${NC}"
+    echo -e "${YELLOW}Please edit $BNET_CONFIG_FILE and set SETUP_KEY to your actual BlueNet VPN setup key.${NC}"
+    exit 1
+fi
+echo -e "${GREEN}Setup key loaded successfully.${NC}"
+
+echo "Setting up BlueNet VPN service..."
+
+# Step 1: Install NetBird service (conditionally)
+SERVICE_FILE="/etc/systemd/system/netbird.service"
+if [ -f "$SERVICE_FILE" ]; then
+    echo -e "${YELLOW}NetBird service file already exists ($SERVICE_FILE). Skipping 'netbird service install'.${NC}"
+    echo "Attempting to reload systemd daemon just in case..."
+    sudo systemctl daemon-reload
+    check_error "Failed to reload systemd daemon."
+else
+    echo "Installing NetBird service..."
+    sudo netbird service install
+    check_error "Failed to install NetBird service."
+fi
+
+# Step 2: Start NetBird service
+echo "Starting NetBird service..."
+sudo netbird service start
+check_error "Failed to start NetBird service."
+
+# Step 3: Connect to BlueNet VPN with management URL and setup key
+echo "Connecting to BlueNet VPN network at $REMOTE_MANAGEMENT_URL using setup key..."
+sudo netbird up --interface-name bnet0 --management-url "$REMOTE_MANAGEMENT_URL" --setup-key "$SETUP_KEY"
+check_error "Failed to connect to BlueNet VPN. Double-check your setup key and network connectivity."
+
+echo ""
+echo -e "${GREEN}BlueNet VPN setup complete!${NC}"
+echo "You should now be connected to your BlueNet VPN network."
+echo "You can check its status with: sudo netbird status"
+
+echo "--- BlueNet VPN Setup Script Finished ---"

@@ -1,0 +1,108 @@
+#!/bin/bash
+
+# BlueNet VPN Installation Script
+
+# --- Colors for Output ---
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+# --- Configuration ---
+NETBIRD_INSTALL_SCRIPT_URL="https://pkgs.netbird.io/install.sh"
+NETBIRD_TEMP_SCRIPT="/tmp/netbird_install.sh"
+
+# --- Functions ---
+
+# Function to check for errors and exit
+check_error() {
+  if [[ $? -ne 0 ]]; then
+    echo -e "${RED}Error: $1. Exiting.${NC}"
+    exit 1
+  fi
+}
+
+# Function to check if NetBird (BlueNet VPN client) is installed
+check_netbird_installed() {
+    if command -v netbird &> /dev/null; then
+        echo "BlueNet VPN (NetBird client) is already installed."
+        netbird_version=$(netbird version 2>/dev/null)
+        if [ -n "$netbird_version" ]; then
+            echo "Installed version: $netbird_version"
+        fi
+        return 0 # BlueNet VPN is installed
+    else
+        echo "BlueNet VPN (NetBird client) is not installed."
+        return 1 # BlueNet VPN is not installed
+    fi
+}
+
+# Function to download and install BlueNet VPN (NetBird)
+install_netbird() {
+    echo "--- Initiating BlueNet VPN Installation Phase ---"
+
+    # Check for curl
+    if ! command -v curl &> /dev/null; then
+        echo "Error: 'curl' is not installed. Please install it first: sudo apt install curl"
+        return 1
+    fi
+
+    # Download the NetBird installation script
+    echo "Downloading BlueNet VPN core components from $NETBIRD_INSTALL_SCRIPT_URL..."
+    if ! curl -fsSL "$NETBIRD_INSTALL_SCRIPT_URL" -o "$NETBIRD_TEMP_SCRIPT"; then
+        echo "Error: Failed to download BlueNet VPN core components."
+        return 1
+    fi
+    echo "Download complete."
+
+    # Make the script executable and run it
+    echo "Executing BlueNet VPN installation process..."
+    chmod +x "$NETBIRD_TEMP_SCRIPT"
+    if ! "$NETBIRD_TEMP_SCRIPT"; then
+        echo "Error: BlueNet VPN installation process failed."
+        rm -f "$NETBIRD_TEMP_SCRIPT" # Clean up failed download
+        return 1
+    fi
+    echo "BlueNet VPN installation complete."
+    return 0
+}
+
+# Function to clean up downloaded files
+cleanup() {
+    echo "Cleaning up temporary files..."
+    if [ -f "$NETBIRD_TEMP_SCRIPT" ]; then
+        rm -f "$NETBIRD_TEMP_SCRIPT"
+        echo "Removed $NETBIRD_TEMP_SCRIPT."
+    else
+        echo "No temporary script to remove."
+    fi
+}
+
+# --- Main Script Logic ---
+
+echo "--- BlueNet VPN Installation Script ---"
+
+# Elevate to sudo
+sudo -v
+check_error "Failed to gain sudo privileges. Please ensure you have sudo permissions."
+
+# Step 1: Check if BlueNet VPN is already installed
+if check_netbird_installed; then
+    echo "BlueNet VPN is already installed. No installation needed. Exiting."
+    cleanup
+    exit 0
+fi
+
+# Step 2: Install BlueNet VPN
+if install_netbird; then
+    echo ""
+    echo "BlueNet VPN has been successfully installed."
+    echo "To setup this device and connect to your BlueNet VPN network, please run the following command:"
+    echo "    sudo ./bnet-setup"
+    echo ""
+else
+    echo "BlueNet VPN installation failed. Please check the error messages above."
+fi
+
+# Step 3: Clean up
+cleanup
+
+echo "--- BlueNet VPN Installation Script Finished ---"

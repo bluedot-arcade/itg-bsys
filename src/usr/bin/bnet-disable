@@ -1,4 +1,5 @@
 #!/bin/bash
 
-sudo systemctl stop wg-quick@bnet0
-sudo systemctl disable wg-quick@bnet0
+sudo netbird down
+sudo systemctl stop netbird
+sudo systemctl disable netbird

@@ -1,4 +1,5 @@
 #!/bin/bash
 
-sudo systemctl enable wg-quick@bnet0
-sudo systemctl start wg-quick@bnet0
+sudo systemctl enable netbird
+sudo systemctl start netbird
+sudo netbird up

@@ -1,27 +1,62 @@
 #!/bin/bash
 
-# Colors for readability
-GREEN='\033[1;32m'
-RED='\033[1;31m'
+# BlueNet VPN Status Script
+
+# --- Colors for Output ---
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
 NC='\033[0m'
 
-BNET_INTERFACE=bnet0
-BNET_SERVER_IP=10.10.0.1
-BNET_SERVER_PING_TIMEOUT=2
+# --- Functions ---
 
-echo -e "Checking BlueNet VPN network connection... "
-echo -e "Server IP: $BNET_SERVER_IP"
+# Function to check for errors (primarily for unexpected failures)
+check_error() {
+  if [[ $? -ne 0 ]]; then
+    echo -e "${RED}Error: $1. Exiting.${NC}"
+    exit 1
+  fi
+}
 
-echo -n "Client IP: "
-ip a show $BNET_INTERFACE | grep inet | awk '{print $2}' | cut -d/ -f1
+# --- Main Script Logic ---
 
-ping -c 1 -W $BNET_SERVER_PING_TIMEOUT $BNET_SERVER_IP > /dev/null 2>&1
-if [ $? -eq 0 ]; then
-    echo -e "Status: ${GREEN}CONNECTED${NC}"
-else
-    echo -e "Status: ${RED}DISCONNECTED${NC}"
+echo -e "${BLUE}--- Checking BlueNet VPN Status ---${NC}"
+
+# Elevate to sudo if not already root
+if [ "$(id -u)" -ne 0 ]; then
+    echo -e "${YELLOW}This script often requires root privileges for full status details. Attempting to elevate...${NC}"
+    sudo -v
+    check_error "Failed to gain sudo privileges. Some status checks might be limited."
 fi
 
+# Check if NetBird client is installed
+if ! command -v netbird &> /dev/null; then
+    echo -e "${RED}Error: BlueNet VPN (netbird client) is not found.${NC}"
+    echo "Please ensure it's installed by running 'sudo ./bnet-install'."
+    exit 1
+fi
 
+echo -e "\n${BLUE}--- NetBird Service Status ---${NC}"
+# Check the systemd service status
+SERVICE_STATUS=$(sudo systemctl is-active netbird.service 2>/dev/null)
+if [ "$SERVICE_STATUS" == "active" ]; then
+    echo -e "${GREEN}NetBird service is active (running).${NC}"
+else
+    echo -e "${YELLOW}NetBird service is inactive or not running (Status: $SERVICE_STATUS).${NC}"
+    echo "You might need to start it with: sudo netbird service start"
+fi
 
+echo -e "\n${BLUE}--- BlueNet VPN Connection Status ---${NC}"
+# Get detailed NetBird connection status
+sudo netbird status
 
+# Check the exit code of netbird status to give a general summary
+if [ $? -eq 0 ]; then
+    echo -e "${GREEN}Overall: BlueNet VPN client seems to be running and connected.${NC}"
+else
+    echo -e "${RED}Overall: BlueNet VPN client might be experiencing issues or is not connected.${NC}"
+    echo "Please review the output above for details."
+fi
+
+echo -e "\n${BLUE}--- BlueNet VPN Status Check Finished ---${NC}"
