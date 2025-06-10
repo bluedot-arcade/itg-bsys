@@ -64,6 +64,8 @@ print_help() {
     echo -e "  bnet-status             - Check the BlueNet VPN connection status."
     echo -e "  bnet-enable             - Enable the BlueNet VPN connection."
     echo -e "  bnet-disable            - Disable the BlueNet VPN connection."
+    echo -e "  bnet-install            - Install the BlueNet VPN required components."
+    echo -e "  bnet-setup              - Setup the BlueNet VPN connection."
     echo ""
 
     # Remote Desktop (VNC) Commands
