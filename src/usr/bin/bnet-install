@@ -39,15 +39,16 @@ check_netbird_installed() {
 install_netbird() {
     echo "--- Initiating BlueNet VPN Installation Phase ---"
 
-    # Check for curl
-    if ! command -v curl &> /dev/null; then
-        echo "Error: 'curl' is not installed. Please install it first: sudo apt install curl"
+    # Check for wget
+    if ! command -v wget &> /dev/null; then
+        echo "Error: 'wget' is not installed. Please install it first: sudo apt install wget"
         return 1
     fi
 
     # Download the NetBird installation script
     echo "Downloading BlueNet VPN core components from $NETBIRD_INSTALL_SCRIPT_URL..."
-    if ! curl -fsSL "$NETBIRD_INSTALL_SCRIPT_URL" -o "$NETBIRD_TEMP_SCRIPT"; then
+    # Using wget with -q for quiet output and -O for output file
+    if ! wget -q -O "$NETBIRD_TEMP_SCRIPT" "$NETBIRD_INSTALL_SCRIPT_URL"; then
         echo "Error: Failed to download BlueNet VPN core components."
         return 1
     fi
@@ -95,7 +96,7 @@ fi
 if install_netbird; then
     echo ""
     echo "BlueNet VPN has been successfully installed."
-    echo "To setup this device and connect to your BlueNet VPN network, please run the following command:"
+    echo "To set up this device and connect to your BlueNet VPN network, please run the following command:"
     echo "    sudo ./bnet-setup"
     echo ""
 else
