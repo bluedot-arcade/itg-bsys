@@ -3,4 +3,4 @@
 	url = https://github.com/bluedot-arcade/evhz
 [submodule "extern/itgmania"]
 	path = extern/itgmania
-	url = https://github.com/dando92/itgmania
+	url = https://github.com/bluedot-arcade/itgmania
