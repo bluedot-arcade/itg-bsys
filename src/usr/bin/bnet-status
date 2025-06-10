@@ -44,7 +44,7 @@ if [ "$SERVICE_STATUS" == "active" ]; then
     echo -e "${GREEN}NetBird service is active (running).${NC}"
 else
     echo -e "${YELLOW}NetBird service is inactive or not running (Status: $SERVICE_STATUS).${NC}"
-    echo "You might need to start it with: sudo netbird service start"
+    echo "You might need to enable it with: bnet-enable"
 fi
 
 echo -e "\n${BLUE}--- BlueNet VPN Connection Status ---${NC}"

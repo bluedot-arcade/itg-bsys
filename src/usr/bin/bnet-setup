@@ -12,6 +12,7 @@ NC='\033[0m'
 REMOTE_MANAGEMENT_URL="https://vpn.bluedotarcade.com"
 BNET_CONFIG_DIR="/etc/bnet"
 BNET_CONFIG_FILE="$BNET_CONFIG_DIR/bnet.config"
+SETUP_KEY="" # Initialize SETUP_KEY
 
 # --- Functions ---
 
@@ -37,34 +38,54 @@ if ! command -v netbird &> /dev/null; then
     exit 1
 fi
 
-# Step: Create config directory if it doesn't exist
-if [ ! -d "$BNET_CONFIG_DIR" ]; then
-    echo -e "${YELLOW}Creating configuration directory: $BNET_CONFIG_DIR${NC}"
-    sudo mkdir -p "$BNET_CONFIG_DIR"
-    check_error "Failed to create configuration directory $BNET_CONFIG_DIR."
+# Step: Parse command-line arguments for SETUP_KEY
+for arg in "$@"; do
+    case "$arg" in
+        --setup-key=*)
+            SETUP_KEY="${arg#*=}"
+            echo -e "${YELLOW}Setup key provided via command-line argument.${NC}"
+            break # Exit loop once setup key is found
+            ;;
+        *)
+            # Ignore other arguments for now, or handle them if needed
+            ;;
+    esac
+done
+
+# Step: If SETUP_KEY not provided via command-line, try to load from config file
+if [ -z "$SETUP_KEY" ]; then
+    echo "No setup key provided as argument. Attempting to load from $BNET_CONFIG_FILE..."
+
+    # Create config directory if it doesn't exist
+    if [ ! -d "$BNET_CONFIG_DIR" ]; then
+        echo -e "${YELLOW}Creating configuration directory: $BNET_CONFIG_DIR${NC}"
+        sudo mkdir -p "$BNET_CONFIG_DIR"
+        check_error "Failed to create configuration directory $BNET_CONFIG_DIR."
+    fi
+
+    # Load SETUP_KEY from config file
+    if [ ! -f "$BNET_CONFIG_FILE" ]; then
+        echo -e "${RED}Error: Configuration file not found: $BNET_CONFIG_FILE${NC}"
+        echo -e "${YELLOW}Please create this file with the following content:${NC}"
+        echo -e "${YELLOW}  SETUP_KEY=\"your_actual_key_here\"${NC}"
+        echo -e "${YELLOW}And replace 'your_actual_key_here' with your BlueNet VPN setup key.${NC}"
+        exit 1
+    fi
+
+    # Source the configuration file to load SETUP_KEY
+    source "$BNET_CONFIG_FILE"
+    check_error "Failed to load configuration from $BNET_CONFIG_FILE. Check its format and permissions."
+else
+    echo -e "${GREEN}Using setup key provided directly.${NC}"
 fi
 
-# Step: Load SETUP_KEY from config file
-echo "Loading setup key from $BNET_CONFIG_FILE..."
-if [ ! -f "$BNET_CONFIG_FILE" ]; then
-    echo -e "${RED}Error: Configuration file not found: $BNET_CONFIG_FILE${NC}"
-    echo -e "${YELLOW}Please create this file with the following content:${NC}"
-    echo -e "${YELLOW}  SETUP_KEY=\"your_actual_key_here\"${NC}"
-    echo -e "${YELLOW}And replace 'your_actual_key_here' with your BlueNet VPN setup key.${NC}"
-    exit 1
-fi
-
-# Source the configuration file to load SETUP_KEY
-source "$BNET_CONFIG_FILE"
-check_error "Failed to load configuration from $BNET_CONFIG_FILE. Check its format and permissions."
-
-# Validate SETUP_KEY after loading
+# Validate SETUP_KEY after loading (from either source)
 if [ -z "$SETUP_KEY" ] || [ "$SETUP_KEY" == "your_actual_key_here" ]; then
-    echo -e "${RED}Error: SETUP_KEY not found or is still default in $BNET_CONFIG_FILE.${NC}"
-    echo -e "${YELLOW}Please edit $BNET_CONFIG_FILE and set SETUP_KEY to your actual BlueNet VPN setup key.${NC}"
+    echo -e "${RED}Error: SETUP_KEY not found or is still default.${NC}"
+    echo -e "${YELLOW}Please provide it as '--setup-key=\"your_actual_key_here\"' or set it in $BNET_CONFIG_FILE.${NC}"
     exit 1
 fi
-echo -e "${GREEN}Setup key loaded successfully.${NC}"
+echo -e "${GREEN}Setup key is ready.${NC}"
 
 echo "Setting up BlueNet VPN service..."
 
@@ -94,6 +115,6 @@ check_error "Failed to connect to BlueNet VPN. Double-check your setup key and n
 echo ""
 echo -e "${GREEN}BlueNet VPN setup complete!${NC}"
 echo "You should now be connected to your BlueNet VPN network."
-echo "You can check its status with: sudo netbird status"
+echo "You can check its status with: bnet-status"
 
 echo "--- BlueNet VPN Setup Script Finished ---"
