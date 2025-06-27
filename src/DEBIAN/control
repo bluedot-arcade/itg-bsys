@@ -1,5 +1,5 @@
 Package: itgmania-bsys
-Version: 0.4.4
+Version: 0.4.5-eurocup25
 Architecture: amd64
 Maintainer: Bluedot Arcade <bluedotarcade@gmail.com>
 Depends: bash, systemd, udev, unclutter-xfixes
