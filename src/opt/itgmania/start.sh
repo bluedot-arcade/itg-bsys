@@ -1,6 +1,7 @@
 #!/bin/bash
 
 CONFIG_FILE="/mnt/data/itgmania/Save/Startup.ini"
+PREFERENCES_FILE="/mnt/data/itgmania/Save/Preferences.ini"
 
 # Create config file if it doesn't exist
 if [ ! -f "$CONFIG_FILE" ]; then
@@ -22,14 +23,31 @@ EOL
     echo "Created default Startup.ini configuration."
 fi
 
-# Wait for the display server to be available (Xwayland or X11)
-for i in {1..10}; do
-    if xrandr > /dev/null 2>&1; then
-        break
+# Wait for the display server to be available, but only if on X11
+if [ "$XDG_SESSION_TYPE" == "x11" ]; then
+    for i in {1..10}; do
+        if xrandr > /dev/null 2>&1; then
+            break
+        fi
+        echo "Waiting for display server..."
+        sleep 1
+    done
+else
+    echo "Running on non-X11 session ($XDG_SESSION_TYPE), skipping wait for X server."
+fi
+
+# Preferences.ini patching
+echo "Checking for $PREFERENCES_FILE..."
+if [ -f "$PREFERENCES_FILE" ]; then
+    if grep -q '^CurrentGame=dance' "$PREFERENCES_FILE"; then
+        echo "CurrentGame is already set to 'dance'. No changes needed."
+    else
+        sed -i 's/^CurrentGame=.*/CurrentGame=dance/' "$PREFERENCES_FILE"
+        echo "Updated CurrentGame to 'dance' in Preferences.ini."
     fi
-    echo "Waiting for display server..."
-    sleep 1
-done
+else
+    echo "Preferences.ini not found. Skipping game setting modification."
+fi
 
 # Read settings from Startup.ini using grep and sed to avoid picking up the wrong line
 SERVICE_MODE_ON_EXIT=$(grep -m1 -oP '^service-mode-on-exit=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
