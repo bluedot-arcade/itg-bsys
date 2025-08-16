@@ -10,6 +10,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
 [Options]
 service-mode-on-exit=true
 windowed-borderless=false
+mangohud=false
 
 [Gamescope]
 enabled=true
@@ -52,6 +53,7 @@ fi
 # Read settings from Startup.ini using grep and sed to avoid picking up the wrong line
 SERVICE_MODE_ON_EXIT=$(grep -m1 -oP '^service-mode-on-exit=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 WINDOWED_BORDERLESS=$(grep -m1 -oP '^windowed-borderless=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
+MANGOHUD_ENABLED=$(grep -m1 -oP '^mangohud=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 GAMESCOPE_ENABLED=$(grep -m1 -oP '^enabled=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 AUTO_RESOLUTION=$(grep -m1 -oP '^auto-resolution=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 AUTO_REFRESHRATE=$(grep -m1 -oP '^auto-refreshrate=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
@@ -76,6 +78,7 @@ fi
 echo "Configuration loaded from $CONFIG_FILE"
 echo "Service Mode on Exit: $SERVICE_MODE_ON_EXIT"
 echo "Windowed Borderless: $WINDOWED_BORDERLESS"
+echo "MangoHud Enabled: $MANGOHUD_ENABLED"
 echo "Gamescope Enabled: $GAMESCOPE_ENABLED"
 echo "  Auto Resolution: $AUTO_RESOLUTION"
 echo "  Auto Refresh Rate: $AUTO_REFRESHRATE"
@@ -93,6 +96,10 @@ if [ "$GAMESCOPE_ENABLED" == "true" ]; then
     if [ "$REALTIME_MODE" == "true" ]; then
         GAMESCOPE_CMD+=" --rt"
     fi
+
+    if [ "$MANGOHUD_ENABLED" == "true" ]; then
+        GAMESCOPE_CMD+=" --mangoapp"
+    fi
     
     # Debug: Print the final gamescope command before execution
     echo "Gamescope command: $GAMESCOPE_CMD"
@@ -100,6 +107,7 @@ if [ "$GAMESCOPE_ENABLED" == "true" ]; then
     # Run the final gamescope command with ITGMania
     $GAMESCOPE_CMD -- /opt/itgmania/itgmania
 else
+    # Stop/start devilspie2 as needed
     if [ "$WINDOWED_BORDERLESS" == "true" ]; then
         echo "Restarting devilspie2 service..."
         systemctl --user restart devilspie2.service
@@ -108,8 +116,15 @@ else
         systemctl --user stop devilspie2.service
     fi
 
-    echo "Starting ITGMania..."
-    /opt/itgmania/itgmania
+    ITGMANIA_CMD="/opt/itgmania/itgmania"
+    if [ "$MANGOHUD_ENABLED" == "true" ]; then
+        echo "Starting ITGMania with MangoHud..."
+        ITGMANIA_CMD="mangohud $ITGMANIA_CMD"
+    fi
+
+    echo "ITGMania command: $ITGMANIA_CMD"
+
+    $ITGMANIA_CMD
 fi
 
 # Run service-mode-enable if enabled in config
