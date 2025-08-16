@@ -25,12 +25,12 @@ EOL
 fi
 
 # Wait for the display server to be available, but only if on X11
-if [ "$XDG_SESSION_TYPE" == "x11" ]; then
+if [ "$XDG_SESSION_TYPE" = "x11" ]; then
     for i in {1..10}; do
-        if xrandr > /dev/null 2>&1; then
+        if xrandr >/dev/null 2>&1; then
             break
         fi
-        echo "Waiting for display server..."
+        echo "Waiting for X11 display server..."
         sleep 1
     done
 else
@@ -50,7 +50,7 @@ else
     echo "Preferences.ini not found. Skipping game setting modification."
 fi
 
-# Read settings from Startup.ini using grep and sed to avoid picking up the wrong line
+# Read settings from Startup.ini
 SERVICE_MODE_ON_EXIT=$(grep -m1 -oP '^service-mode-on-exit=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 WINDOWED_BORDERLESS=$(grep -m1 -oP '^windowed-borderless=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 MANGOHUD_ENABLED=$(grep -m1 -oP '^mangohud=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
@@ -62,16 +62,25 @@ RESOLUTION_H=$(grep -m1 -oP '^resolution-height=\K.*' "$CONFIG_FILE" | tr -d '[:
 REFRESH_RATE=$(grep -m1 -oP '^refresh-rate=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 REALTIME_MODE=$(grep -m1 -oP '^realtime-mode=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 
-# Auto-detect resolution if enabled
-if [ "$AUTO_RESOLUTION" == "true" ]; then
-    RESOLUTION=$(xrandr | grep '*' | awk '{print $1}' | head -n1)
-    RESOLUTION_W=${RESOLUTION%x*}
-    RESOLUTION_H=${RESOLUTION#*x}
-fi
-
-# Auto-detect refresh rate if enabled
-if [ "$AUTO_REFRESHRATE" == "true" ]; then
-    REFRESH_RATE=$(xrandr | grep '*' | awk '{print $2}' | head -n1 | cut -d'.' -f1)
+# Auto-detect resolution and refresh rate
+if [ "$XDG_SESSION_TYPE" = "x11" ]; then
+    if [ "$AUTO_RESOLUTION" = "true" ]; then
+        RESOLUTION=$(xrandr | grep '*' | awk '{print $1}' | head -n1)
+        RESOLUTION_W=${RESOLUTION%x*}
+        RESOLUTION_H=${RESOLUTION#*x}
+    fi
+    if [ "$AUTO_REFRESHRATE" = "true" ]; then
+        REFRESH_RATE=$(xrandr | grep '*' | awk '{print $2}' | head -n1 | cut -d'.' -f1)
+    fi
+else
+    echo "Running on non-X11 session ($XDG_SESSION_TYPE), skipping auto-detection of resolution and refresh rate."
+    if [ "$AUTO_RESOLUTION" = "true" ]; then
+        RESOLUTION_W=""
+        RESOLUTION_H=""
+    fi
+    if [ "$AUTO_REFRESHRATE" = "true" ]; then
+        REFRESH_RATE=""
+    fi
 fi
 
 # Print detected or configured values
@@ -88,27 +97,38 @@ echo "  Refresh Rate: $REFRESH_RATE"
 echo "  Realtime Mode: $REALTIME_MODE"
 
 # Start ITGMania with Gamescope if enabled
-if [ "$GAMESCOPE_ENABLED" == "true" ]; then
+if [ "$GAMESCOPE_ENABLED" = "true" ]; then
     echo "Starting ITGMania with Gamescope..."
-    GAMESCOPE_CMD="gamescope -r $REFRESH_RATE -w $RESOLUTION_W -h $RESOLUTION_H -f"
-    
-    # Add real-time mode if enabled
-    if [ "$REALTIME_MODE" == "true" ]; then
-        GAMESCOPE_CMD+=" --rt"
+    GAMESCOPE_CMD="gamescope"
+
+    # Add windowed borderless or fullscreen option
+    if [ "$WINDOWED_BORDERLESS" = "true" ]; then
+        GAMESCOPE_CMD+=" -b"
+    else
+        GAMESCOPE_CMD+=" -f"
     fi
 
-    if [ "$MANGOHUD_ENABLED" == "true" ]; then
-        GAMESCOPE_CMD+=" --mangoapp"
-    fi
-    
+    # Add resolution/refresh only if available
+    [ -n "$RESOLUTION_W" ] && [ -n "$RESOLUTION_H" ] && GAMESCOPE_CMD+=" -w $RESOLUTION_W -h $RESOLUTION_H -W $RESOLUTION_W -H $RESOLUTION_H"
+    [ -n "$REFRESH_RATE" ] && GAMESCOPE_CMD+=" -r $REFRESH_RATE"
+
+    # Add real-time mode if enabled
+    [ "$REALTIME_MODE" = "true" ] && GAMESCOPE_CMD+=" --rt"
+
     # Debug: Print the final gamescope command before execution
     echo "Gamescope command: $GAMESCOPE_CMD"
-    
-    # Run the final gamescope command with ITGMania
-    $GAMESCOPE_CMD -- /opt/itgmania/itgmania
+
+    # Run gamescope with ITGMania
+    if [ "$MANGOHUD_ENABLED" = "true" ]; then
+        echo "Starting ITGMania with MangoHud under Gamescope..."
+        $GAMESCOPE_CMD -- mangohud /opt/itgmania/itgmania
+    else 
+        echo "Starting ITGMania under Gamescope..."
+        $GAMESCOPE_CMD -- /opt/itgmania/itgmania
+    fi
 else
     # Stop/start devilspie2 as needed
-    if [ "$WINDOWED_BORDERLESS" == "true" ]; then
+    if [ "$WINDOWED_BORDERLESS" = "true" ]; then
         echo "Restarting devilspie2 service..."
         systemctl --user restart devilspie2.service
     else
@@ -117,18 +137,17 @@ else
     fi
 
     ITGMANIA_CMD="/opt/itgmania/itgmania"
-    if [ "$MANGOHUD_ENABLED" == "true" ]; then
+    if [ "$MANGOHUD_ENABLED" = "true" ]; then
         echo "Starting ITGMania with MangoHud..."
         ITGMANIA_CMD="mangohud $ITGMANIA_CMD"
     fi
 
     echo "ITGMania command: $ITGMANIA_CMD"
-
     $ITGMANIA_CMD
 fi
 
 # Run service-mode-enable if enabled in config
-if [ "$SERVICE_MODE_ON_EXIT" == "true" ]; then
+if [ "$SERVICE_MODE_ON_EXIT" = "true" ]; then
     echo "Enabling service mode on exit..."
     /usr/bin/service-mode-enable
 fi
