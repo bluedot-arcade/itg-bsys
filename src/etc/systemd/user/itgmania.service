@@ -4,11 +4,14 @@ Requires=default.target
 After=default.target
 
 [Service]
-Type=exec
+Type=simple
 Restart=on-failure
 RestartSec=3s
 ExecStart=/usr/bin/bash -c '/opt/itgmania/start.sh'
 Nice=-10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=itgmania
 
 [Install]
 WantedBy=default.target
