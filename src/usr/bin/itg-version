@@ -1,0 +1,20 @@
+#!/bin/bash
+
+PACKAGE="itgmania-bsys"
+BSYS_VERSION_FILE="/etc/bsys/version"
+
+# Check if the package is installed
+if dpkg -s "$PACKAGE" &> /dev/null; then
+    VERSION=$(dpkg -s "$PACKAGE" | grep '^Version:' | awk '{print $2}')
+    echo "BlueSys ITG: $VERSION"
+else
+    echo "BlueSys ITG: Not installed"
+fi
+
+# Check if the BlueSys version file exists
+if [[ -f "$BSYS_VERSION_FILE" ]]; then
+    BSYS_VERSION=$(cat "$BSYS_VERSION_FILE")
+    echo "BlueSys OS version: $BSYS_VERSION"
+else
+    echo "BlueSys OS version: Unknown"
+fi
