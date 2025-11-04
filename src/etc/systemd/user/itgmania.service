@@ -1,12 +1,13 @@
 [Unit]
 Description=ITGMania Service
-Requires=default.target
-After=default.target
+After=graphical-session.target
+Wants=graphical-session.target
 
 [Service]
 Type=simple
 Restart=on-failure
 RestartSec=3s
+ExecStartPre=/bin/sleep 3
 ExecStart=/usr/bin/bash -c '/opt/itgmania/start.sh'
 Nice=-10
 StandardOutput=syslog
@@ -14,4 +15,4 @@ StandardError=syslog
 SyslogIdentifier=itgmania
 
 [Install]
-WantedBy=default.target
+WantedBy=graphical-session.target
