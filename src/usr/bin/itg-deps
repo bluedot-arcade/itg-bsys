@@ -1,0 +1,36 @@
+#!/bin/bash
+
+REQUIRED_PACKAGES=(
+    gamemode
+    gamescope
+    devilspie2
+    mangohud
+    unclutter-xfixes
+)
+
+echo "Checking required packages..."
+echo
+
+MISSING=()
+for PKG in "${REQUIRED_PACKAGES[@]}"; do
+    if dpkg -s "$PKG" &> /dev/null; then
+        VERSION=$(dpkg -s "$PKG" | grep '^Version:' | awk '{print $2}')
+        echo "$PKG is installed (version: $VERSION)"
+    else
+        echo "$PKG is NOT installed"
+        MISSING+=("$PKG")
+    fi
+done
+
+echo
+if [ ${#MISSING[@]} -eq 0 ]; then
+    echo "All required packages are installed!"
+else
+    echo "Missing packages:"
+    for PKG in "${MISSING[@]}"; do
+        echo "  - $PKG"
+    done
+    echo
+    echo "You can install them with:"
+    echo "sudo apt install ${MISSING[*]}"
+fi
