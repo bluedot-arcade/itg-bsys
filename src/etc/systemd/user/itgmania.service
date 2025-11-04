@@ -7,8 +7,7 @@ Wants=graphical-session.target
 Type=simple
 Restart=on-failure
 RestartSec=3s
-Environment=ENV_SKIP_PRE=0
-ExecStartPre=/usr/bin/bash -c '[ "$ENV_SKIP_PRE" = "1" ] || sleep 3'
+ExecStartPre=/usr/bin/bash -c '[ "$ITGMANIA_SKIP_PRE" = "1" ] || sleep 3'
 ExecStart=/usr/bin/bash -c '/opt/itgmania/start.sh'
 Nice=-10
 StandardOutput=syslog
