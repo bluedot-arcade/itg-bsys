@@ -14,7 +14,7 @@ fi
 # Check if the BlueSys version file exists
 if [[ -f "$BSYS_VERSION_FILE" ]]; then
     BSYS_VERSION=$(cat "$BSYS_VERSION_FILE")
-    echo "BlueSys OS version: $BSYS_VERSION"
+    echo "BlueSys OS: $BSYS_VERSION"
 else
-    echo "BlueSys OS version: Unknown"
+    echo "BlueSys OS: Unknown"
 fi
