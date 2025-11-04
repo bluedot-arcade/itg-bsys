@@ -1,3 +1,4 @@
 #!/bin/bash
 
-systemctl --user start itgmania.service
+systemctl --user start itgmania.service ENV_SKIP_PRE=1
+
