@@ -25,6 +25,7 @@ print_help() {
     echo -e "  itg-pref-startup        - Show/Edit Startup.ini (game startup preferences)."
     echo -e "  itg-data                - Show game data folder in Nautilus."
     echo -e "  itg-reset               - Reset the game settings to default."
+    echo -e "  itg-version             - Show version information."
     echo ""
 
     # Service Mode Commands
