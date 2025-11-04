@@ -1,3 +1,5 @@
 #!/bin/bash
 
-systemctl --user stop itgmania.service ENV_SKIP_PRE=1
+systemctl --user set-environment ITGMANIA_SKIP_PRE=1
+systemctl --user stop itgmania.service
+systemctl --user unset-environment ITGMANIA_SKIP_PRE
