@@ -11,6 +11,8 @@ if [ ! -f "$CONFIG_FILE" ]; then
 service-mode-on-exit=true
 windowed-borderless=false
 mangohud=false
+gamemode=true
+allow-vsync=false
 
 [Gamescope]
 enabled=true
@@ -54,6 +56,8 @@ fi
 SERVICE_MODE_ON_EXIT=$(grep -m1 -oP '^service-mode-on-exit=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 WINDOWED_BORDERLESS=$(grep -m1 -oP '^windowed-borderless=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 MANGOHUD_ENABLED=$(grep -m1 -oP '^mangohud=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
+GAMEMODE_ENABLED=$(grep -m1 -oP '^gamemode=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
+ALLOW_VSYNC=$(grep -m1 -oP '^allow-vsync=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 GAMESCOPE_ENABLED=$(grep -m1 -oP '^enabled=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 AUTO_RESOLUTION=$(grep -m1 -oP '^auto-resolution=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 AUTO_REFRESHRATE=$(grep -m1 -oP '^auto-refreshrate=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
@@ -88,6 +92,8 @@ echo "Configuration loaded from $CONFIG_FILE"
 echo "Service Mode on Exit: $SERVICE_MODE_ON_EXIT"
 echo "Windowed Borderless: $WINDOWED_BORDERLESS"
 echo "MangoHud Enabled: $MANGOHUD_ENABLED"
+echo "Gamemode Enabled: $GAMEMODE_ENABLED"
+echo "Allow VSync: $ALLOW_VSYNC"
 echo "Gamescope Enabled: $GAMESCOPE_ENABLED"
 echo "  Auto Resolution: $AUTO_RESOLUTION"
 echo "  Auto Refresh Rate: $AUTO_REFRESHRATE"
@@ -140,6 +146,16 @@ else
     if [ "$MANGOHUD_ENABLED" = "true" ]; then
         echo "Starting ITGMania with MangoHud..."
         ITGMANIA_CMD="mangohud $ITGMANIA_CMD"
+    fi
+
+    if [ "$GAMEMODE_ENABLED" = "true" ]; then
+        echo "Starting ITGMania with Gamemode..."
+        ITGMANIA_CMD="gamemoderun $ITGMANIA_CMD"
+    fi
+
+    if [ "$ALLOW_VSYNC" = "false" ]; then
+        echo "Forcing VSync off..."
+        ITGMANIA_CMD="__GL_SYNC_TO_VBLANK=0 vblank_mode=0 $ITGMANIA_CMD"
     fi
 
     echo "ITGMania command: $ITGMANIA_CMD"
