@@ -155,11 +155,12 @@ else
 
     if [ "$ALLOW_VSYNC" = "false" ]; then
         echo "Forcing VSync off..."
-        ITGMANIA_CMD="__GL_SYNC_TO_VBLANK=0 vblank_mode=0 $ITGMANIA_CMD"
+        echo "Running: __GL_SYNC_TO_VBLANK=0 vblank_mode=0 $ITGMANIA_CMD"
+        __GL_SYNC_TO_VBLANK=0 vblank_mode=0 $ITGMANIA_CMD
+    else
+        echo "Running: $ITGMANIA_CMD"
+        $ITGMANIA_CMD
     fi
-
-    echo "ITGMania command: $ITGMANIA_CMD"
-    $ITGMANIA_CMD
 fi
 
 # Run service-mode-enable if enabled in config
