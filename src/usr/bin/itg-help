@@ -75,6 +75,7 @@ print_help() {
     echo ""
     echo -e "  vnc-disable             - Disable and stop the VNC server."
     echo -e "  vnc-enable              - Enable and start the VNC server."
+    echo -e "  vnc-install             - Install the VNC server."
     echo -e "  vnc-status              - Check if the VNC server is running."
     echo ""
 }

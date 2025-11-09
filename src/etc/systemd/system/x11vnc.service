@@ -1,16 +1,15 @@
 [Unit]
-Description=TigerVNC Server on Display :0
+Description=Start x11vnc on display :0
 After=multi-user.target network.target
 StartLimitIntervalSec=0
 
 [Service]
-Type=forking
+Type=simple
 User=itg
 Group=itg
 WorkingDirectory=/home/itg
 Environment="DISPLAY=:0"
-ExecStart=/usr/bin/x0tigervncserver -rfbport 5901 -localhost -SecurityTypes=None
-ExecStop=/usr/bin/killall x0tigervncserver
+ExecStart=/usr/bin/x11vnc -display :0 -rfbport 5901 -localhost -nopw -forever
 Restart=always
 
 [Install]
