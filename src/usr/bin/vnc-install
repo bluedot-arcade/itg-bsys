@@ -1,18 +1,28 @@
 #!/bin/bash
 
-if ! command -v x11vnc &> /dev/null
-then
-    read -p "x11vnc could not be found. Do you want to install it? (Y/n) " response
+GREEN="\e[32m"
+YELLOW="\e[33m"
+RED="\e[31m"
+RESET="\e[0m"
+
+echo -e "${YELLOW}Checking for x11vnc installation...${RESET}"
+
+if ! command -v x11vnc &> /dev/null; then
+    echo -e "${RED}x11vnc not found.${RESET}"
+    read -p "Would you like to install it? (Y/n): " response
     response=${response:-Y}
+
     if [[ "$response" =~ ^[Yy]$ ]]; then
-        sudo apt-get update
+        echo -e "${YELLOW}Installing x11vnc...${RESET}"
+        sudo apt-get update -qq
         sudo apt-get install -y x11vnc
-        echo "To enable vnc please run 'vnc-enable' command."
+        echo -e "${GREEN}x11vnc installed successfully.${RESET}"
+        echo -e "To enable VNC, run: ${YELLOW}vnc-enable${RESET}"
     else
-        echo "x11vnc is required for VNC functionality. Exiting."
+        echo -e "${RED}x11vnc is required for VNC functionality. Exiting.${RESET}"
         exit 1
     fi
 else
-    echo "x11vnc is already installed."
-    echo "To enable vnc please run 'vnc-enable' command."
+    echo -e "${GREEN}x11vnc is already installed.${RESET}"
+    echo -e "To enable VNC, run: ${YELLOW}vnc-enable${RESET}"
 fi

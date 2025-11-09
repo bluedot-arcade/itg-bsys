@@ -1,4 +1,4 @@
 #!/bin/bash
 
-sudo systemctl stop x0tigervnc.service
-sudo systemctl disable x0tigervnc.service
+sudo systemctl stop x11vnc.service
+sudo systemctl disable x11vnc.service

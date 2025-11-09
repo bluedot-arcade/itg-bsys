@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sudo systemctl status x0tigervnc.service
+sudo systemctl status x11vnc.service
