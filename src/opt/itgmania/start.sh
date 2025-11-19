@@ -12,10 +12,10 @@ service-mode-on-exit=true
 windowed-borderless=false
 mangohud=false
 gamemode=true
-allow-vsync=false
+allow-vsync=true
 
 [Gamescope]
-enabled=true
+enabled=false
 auto-resolution=true
 auto-refreshrate=true
 resolution-width=1920
