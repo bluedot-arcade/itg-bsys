@@ -1,7 +1,7 @@
 [Unit]
 Description=ITGMania Service
-After=graphical-session.target
-Wants=graphical-session.target
+After=default.target
+Wants=default.target
 
 [Service]
 Type=simple
@@ -10,9 +10,6 @@ RestartSec=3s
 ExecStartPre=/usr/bin/bash -c '[ "$ITGMANIA_SKIP_PRE" = "1" ] || sleep 3'
 ExecStart=/usr/bin/bash -c '/opt/itgmania/start.sh'
 Nice=-10
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=itgmania
 
 [Install]
-WantedBy=graphical-session.target
+WantedBy=default.target
