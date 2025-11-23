@@ -14,7 +14,6 @@ mangohud=false
 gamemode=true
 allow-vsync=true
 set-max-resolution=true
-set-max-refreshrate=true
 
 [Gamescope]
 enabled=false
@@ -61,7 +60,6 @@ MANGOHUD_ENABLED=$(grep -m1 -oP '^mangohud=\K.*' "$CONFIG_FILE" | tr -d '[:space
 GAMEMODE_ENABLED=$(grep -m1 -oP '^gamemode=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 ALLOW_VSYNC=$(grep -m1 -oP '^allow-vsync=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 SET_MAX_RESOLUTION=$(grep -m1 -oP '^set-max-resolution=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
-SET_MAX_REFRESHRATE=$(grep -m1 -oP '^set-max-refreshrate=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 GAMESCOPE_ENABLED=$(grep -m1 -oP '^enabled=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 AUTO_RESOLUTION=$(grep -m1 -oP '^auto-resolution=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 AUTO_REFRESHRATE=$(grep -m1 -oP '^auto-refreshrate=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
@@ -71,16 +69,10 @@ REFRESH_RATE=$(grep -m1 -oP '^refresh-rate=\K.*' "$CONFIG_FILE" | tr -d '[:space
 REALTIME_MODE=$(grep -m1 -oP '^realtime-mode=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 
 # Set max resolution and/or refresh rate if enabled
-if [ "$SET_MAX_RESOLUTION" = "true" ] && [ "$SET_MAX_REFRESHRATE" = "true" ]; then
-    echo "Setting maximum resolution and refresh rate..."
-    /opt/itgmania/xrandr_set.sh --set-max-res --set-max-rate
-elif [ "$SET_MAX_RESOLUTION" = "true" ]; then
+if [ "$SET_MAX_RESOLUTION" = "true" ]; then
     echo "Setting maximum resolution..."
-    /opt/itgmania/set_max_res.sh --set-max-res
-elif [ "$SET_MAX_REFRESHRATE" = "true" ]; then
-    echo "Setting maximum refresh rate..."
-    /opt/itgmania/set_max_rate.sh --set-max-rate
-else 
+    /opt/itgmania/set_max_res.sh
+fi
 
 # Auto-detect resolution and refresh rate
 if [ "$XDG_SESSION_TYPE" = "x11" ]; then
