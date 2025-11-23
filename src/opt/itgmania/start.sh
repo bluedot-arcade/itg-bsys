@@ -14,6 +14,7 @@ mangohud=false
 gamemode=true
 allow-vsync=true
 set-max-resolution=true
+set-max-volume=true
 
 [Gamescope]
 enabled=false
@@ -60,6 +61,7 @@ MANGOHUD_ENABLED=$(grep -m1 -oP '^mangohud=\K.*' "$CONFIG_FILE" | tr -d '[:space
 GAMEMODE_ENABLED=$(grep -m1 -oP '^gamemode=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 ALLOW_VSYNC=$(grep -m1 -oP '^allow-vsync=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 SET_MAX_RESOLUTION=$(grep -m1 -oP '^set-max-resolution=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
+SET_MAX_VOLUME=$(grep -m1 -oP '^set-max-volume=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 GAMESCOPE_ENABLED=$(grep -m1 -oP '^enabled=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 AUTO_RESOLUTION=$(grep -m1 -oP '^auto-resolution=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 AUTO_REFRESHRATE=$(grep -m1 -oP '^auto-refreshrate=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
@@ -72,6 +74,12 @@ REALTIME_MODE=$(grep -m1 -oP '^realtime-mode=\K.*' "$CONFIG_FILE" | tr -d '[:spa
 if [ "$SET_MAX_RESOLUTION" = "true" ]; then
     echo "Setting maximum resolution..."
     /opt/itgmania/set_max_res.sh
+fi
+
+# Set max volume if enabled
+if [ "$SET_MAX_VOLUME" = "true" ]; then
+    echo "Setting maximum volume..."
+    /opt/itgmania/set_max_volume.sh
 fi
 
 # Auto-detect resolution and refresh rate
