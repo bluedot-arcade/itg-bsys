@@ -81,6 +81,10 @@ build_itgmania() {
   echo "Copying itgmania folder to: ${srcDir}/opt"
   cp -arv "$extractedDir" "${srcDir}/opt"
   rm -rf "$tempDir"
+
+  echo "Removing unnecessary files from ITGmania..."
+  rm -rf "${srcDir}/opt/itgmania/.git"
+  rm -rf "${srcDir}/opt/itgmania/Themes/Simply \Love/.git"
 }
 
 # Verify the control file exists
