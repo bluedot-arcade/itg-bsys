@@ -1,5 +1,6 @@
 [Unit]
 Description=ITGMania Service
+RequiresMountsFor=/home/itg/.itgmania
 After=default.target
 Wants=default.target
 
