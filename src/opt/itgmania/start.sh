@@ -14,7 +14,8 @@ mangohud=false
 gamemode=true
 allow-vsync=true
 set-max-resolution=true
-set-max-volume=true
+set-fixed-volume=75
+center-audio-balance=true
 
 [Gamescope]
 enabled=false
@@ -61,7 +62,8 @@ MANGOHUD_ENABLED=$(grep -m1 -oP '^mangohud=\K.*' "$CONFIG_FILE" | tr -d '[:space
 GAMEMODE_ENABLED=$(grep -m1 -oP '^gamemode=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 ALLOW_VSYNC=$(grep -m1 -oP '^allow-vsync=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 SET_MAX_RESOLUTION=$(grep -m1 -oP '^set-max-resolution=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
-SET_MAX_VOLUME=$(grep -m1 -oP '^set-max-volume=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
+SET_FIXED_VOLUME=$(grep -m1 -oP '^set-fixed-volume=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
+CENTER_AUDIO_BALANCE=$(grep -m1 -oP '^center-audio-balance=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 GAMESCOPE_ENABLED=$(grep -m1 -oP '^enabled=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 AUTO_RESOLUTION=$(grep -m1 -oP '^auto-resolution=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
 AUTO_REFRESHRATE=$(grep -m1 -oP '^auto-refreshrate=\K.*' "$CONFIG_FILE" | tr -d '[:space:]')
@@ -76,10 +78,10 @@ if [ "$SET_MAX_RESOLUTION" = "true" ]; then
     /opt/itgmania/set_max_res.sh
 fi
 
-# Set max volume if enabled
-if [ "$SET_MAX_VOLUME" = "true" ]; then
-    echo "Setting maximum volume..."
-    /opt/itgmania/set_max_volume.sh
+# Set fixed volume if a valid numeric value (0-100) is configured
+if [[ "$SET_FIXED_VOLUME" =~ ^[0-9]+$ ]] && [ "$SET_FIXED_VOLUME" -ge 0 ] && [ "$SET_FIXED_VOLUME" -le 100 ]; then
+    echo "Setting fixed volume to ${SET_FIXED_VOLUME}% (center-audio-balance: ${CENTER_AUDIO_BALANCE})..."
+    /opt/itgmania/set_fixed_volume.sh "$SET_FIXED_VOLUME" "$CENTER_AUDIO_BALANCE"
 fi
 
 # Auto-detect resolution and refresh rate
@@ -111,7 +113,8 @@ echo "MangoHud Enabled: $MANGOHUD_ENABLED"
 echo "Gamemode Enabled: $GAMEMODE_ENABLED"
 echo "Allow VSync: $ALLOW_VSYNC"
 echo "Set Max Resolution: $SET_MAX_RESOLUTION"
-echo "Set Max Refresh Rate: $SET_MAX_REFRESHRATE"
+echo "Set Fixed Volume: $SET_FIXED_VOLUME"
+echo "Center Audio Balance: $CENTER_AUDIO_BALANCE"
 echo "Gamescope Enabled: $GAMESCOPE_ENABLED"
 echo "  Auto Resolution: $AUTO_RESOLUTION"
 echo "  Auto Refresh Rate: $AUTO_REFRESHRATE"

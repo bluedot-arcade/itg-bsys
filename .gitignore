@@ -6,6 +6,7 @@ src/opt/itgmania
 !src/opt/itgmania/start.sh
 !src/opt/itgmania/set_max_res.sh
 !src/opt/itgmania/set_max_volume.sh
+!src/opt/itgmania/set_fixed_volume.sh
 !src/opt/itgmania/Defaults
 
 scripts/*.xz
