@@ -68,7 +68,8 @@ build_itgmania() {
   tempDir="/tmp/itgmania_build"
   echo "Extracting ITGmania build archive..."
   mkdir -p "$tempDir"
-  tar -xzf "$buildArchive" -C "$tempDir"
+  # Skip VCS metadata (e.g. Themes/Simply Love/.git, hundreds of MB)
+  tar -xzf "$buildArchive" -C "$tempDir" --exclude='.git'
 
   # Find the extracted directory
   extractedDir=$(find "$tempDir" -maxdepth 2 -type d -name "itgmania" | head -n 1)
@@ -82,9 +83,9 @@ build_itgmania() {
   cp -arv "$extractedDir" "${srcDir}/opt"
   rm -rf "$tempDir"
 
-  echo "Removing unnecessary files from ITGmania..."
-  rm -rf "${srcDir}/opt/itgmania/.git"
-  rm -rf "${srcDir}/opt/itgmania/Themes/Simply \Love/.git"
+  # Remove any .git left over from previous builds (cp does not clear the target)
+  echo "Removing .git directories from ITGmania..."
+  find "${srcDir}/opt/itgmania" -name .git -prune -exec rm -rf {} +
 }
 
 # Verify the control file exists
