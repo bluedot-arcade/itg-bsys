@@ -72,6 +72,10 @@ update_fstab() {
         echo "Found and removed previous entry for $mount_point in /etc/fstab."
     fi
 
+    # Ensure the mount point exists, otherwise the game's mount call fails (exit 32)
+    sudo mkdir -p "$mount_point"
+    check_error "Failed to create mount point $mount_point"
+
     # Add the new entry with the device_path, mount point, and options
     echo "$device_path $mount_point auto nosuid,nodev,nofail,noauto,uid=1000,gid=1000,rw,users 0 0" | sudo tee -a "$fstab_file" > /dev/null
     check_error
