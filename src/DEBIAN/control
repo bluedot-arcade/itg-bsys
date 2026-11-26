@@ -1,5 +1,5 @@
 Package: itgmania-bsys
-Version: 1.3.9
+Version: 1.3.0
 Architecture: amd64
 Maintainer: Bluedot Arcade <bluedotarcade@gmail.com>
 Depends: bash, systemd, udev, unclutter-xfixes
